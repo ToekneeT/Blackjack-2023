@@ -59,12 +59,11 @@ def isBJ(hand):
 
 
 def yesNo(choice):
-	#while choice.lower() != "y" or choice.lower() != "yes" or choice.lower() != "n" or choice.lower() != "no":
-	while choice.lower() not in ["y", "yes", "n", "no"]:
+	while choice.lower() not in ["y", "y.", "yes", "yes.", "n", "n.", "no", "no."]:
 		choice = input("Invalid input, try again: ")
-	if choice.lower() == "y" or choice.lower() == "yes":
+	if choice.lower() in ["y", "y." "yes", "yes."]:
 		return True
-	elif choice.lower() == "n" or choice.lower() == "no":
+	elif choice.lower() in ["n", "n." "no", "no."]:
 		return False
 
 
@@ -105,10 +104,12 @@ def gameStart(deck):
 				insure = input("Would you like to purchase insurance? y/n ")
 				if yesNo(insure):
 					insurance = True
-			if isBJ(dealerCards):
-				print("Dealer Blackjack! Insurance Paid Out.")
-			else:
-				print("No Blackjack! No Pay Out.")
+				if isBJ(dealerCards):
+					print("Dealer Blackjack! Insurance Paid Out.")
+					printCards(dealerCards[0], False)
+					printCards(dealerCards[1], False)
+				else:
+					print("No Blackjack! No Pay Out.")
 
 
 
