@@ -15,12 +15,12 @@ cardValue = {"A":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10
 
 
 def msgDivider(msg):
-	print("_"*20, end=" ")
+	print("_" * 20, end=" ")
 	print(msg, end=" ")
-	print("_"*20)
+	print("_" * 20)
 
 
-def generateDeck(suits, suitValue, cards, cardValue):
+def generateDeck(suits, suitValue, cards, cardValue): # Generates decks. Useful for multi-deck games.
 	deck = []
 
 	for suit in suits:
@@ -30,24 +30,88 @@ def generateDeck(suits, suitValue, cards, cardValue):
 	return deck
 
 
+def printCards(hand, hidden): # Prints the cards in a pretty format :>
+	print(" " + "_" * 5)
+	print("|", end="")
+	if hidden == False:
+		if hand.name == "10":
+			print(hand.name, end="")
+			print(" " * 3, end="|\n")
+		else:
+			print(hand.name, end="")
+			print(" " * 4, end="|\n")
+		print("|" + hand.suit + " " * 4, end="|\n")
+		print("|" + " " * 5, end="|\n")
+		print(" " + "-" * 5)
+	else:
+		print("?" + " " * 4, end="|\n")
+		print("|" + " " * 5, end="|\n")
+		print("|" + " " * 5, end="|\n")
+		print(" " + "-" * 5)
+
+
+def isBJ(hand):
+	if hand[0].value == 11 and hand[1].value == 10:
+		return True
+	if hand[0].value == 10 and hand[1].value == 11:
+		return True
+	return False
+
+
+def yesNo(choice):
+	#while choice.lower() != "y" or choice.lower() != "yes" or choice.lower() != "n" or choice.lower() != "no":
+	while choice.lower() not in ["y", "yes", "n", "no"]:
+		choice = input("Invalid input, try again: ")
+	if choice.lower() == "y" or choice.lower() == "yes":
+		return True
+	elif choice.lower() == "n" or choice.lower() == "no":
+		return False
+
+
 def gameStart(deck):
 	playerCards = []
 	dealerCards = []
 	playerValue = 0
 	dealerValue = 0
+	insurance = False
 
 	while len(playerCards) < 2:
 
-		dealtCard = random.choice(deckOne)
+		dealtCard = random.choice(deck)
 		playerCards.append(dealtCard)
 		deck.remove(dealtCard)
-
 		playerValue += dealtCard.value
 
-		print(f"Player Cards: ", end="")
+		firstCard = True
+		dealtCard = random.choice(deck)
+		dealerCards.append(dealtCard)
+		dealerValue += dealtCard.value
+
+		print("Player Cards: ")
 		for card in playerCards:
-			print(card.name, end=" ")
-		print(f"\nTotal: {playerValue}")
+			printCards(card, False)
+
+		print("Dealer Cards: ") # Dealer card printout. Slightly different since one card needs to be hidden.
+		for card in dealerCards:
+			printCards(card, firstCard)
+			if not(firstCard):
+				print(f"Dealer Card: {card.value}")
+			firstCard = False
+
+		print(f"\nPlayer Total: {playerValue}\n")
+
+		if len(dealerCards) == 2: # BJ checker; Insurance y/n
+			if dealerCards[1].value == 10 or dealerCards[1].value == 11:
+				insure = input("Would you like to purchase insurance? y/n ")
+				if yesNo(insure):
+					insurance = True
+			if isBJ(dealerCards):
+				print("Dealer Blackjack! Insurance Paid Out.")
+			else:
+				print("No Blackjack! No Pay Out.")
+
+
+
 
 
 msgDivider("Welcome to Toni's BJ Lounge")
