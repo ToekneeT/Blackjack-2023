@@ -13,12 +13,6 @@ suitValue = {"Spades":"\u2664", "Hearts":"\u2661", "Clubs":"\u2667", "Diamonds":
 cards = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "K", "Q"]
 cardValue = {"A":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "J":10, "K":10, "Q":10}
 
-# _____ Rigged Deck ______ Used for testing :>
-'''
-riggedCards = ["A", "10", "J", "K", "Q"]
-riggedCardValue = {"A":11, "10":10, "J":10, "K":10, "Q":10}
-'''
-# _____ Rigged Deck _____
 
 def msgDivider(msg):
     if msg == "Blackjack!":
@@ -87,6 +81,18 @@ def dealCard(hand, deck): # Deal card from deck, remove, returns dealt card valu
     return dealtCard.value
 
 
+def aces(hand, handTotal): # Prevents card total greater than 21 due to aces. Returns hand total.
+    count = 0
+    while handTotal > 21:
+        if hand[count].value == 11:
+            hand[count].value = 1
+            handTotal -= 10
+            count += 1
+        else:
+            count +=1
+    return handTotal
+
+
 def hit(hand, deck, choice):
     if yesNo(choice):
         dealCard(hand, deck)
@@ -103,6 +109,8 @@ def gameStart(deck):
         playerValue += dealCard(playerCards, deck)
         dealerValue += dealCard(dealerCards, deck)
         firstCard = True
+        playerValue = aces(playerCards, playerValue)
+        dealerValue = aces(dealerCards, dealerValue)
 
         print("Player Cards: ")
         for card in playerCards:
@@ -121,7 +129,7 @@ def gameStart(deck):
             continue
 
         if len(dealerCards) == 2: # BJ checker; Insurance y/n
-            if dealerCards[1].value == 10 or dealerCards[1].value == 11:
+            if dealerCards[1].value == 11:
                 insure = input("Would you like to purchase insurance? y/n ")
                 if yesNo(insure):
                     insurance = True
@@ -139,13 +147,20 @@ def gameStart(deck):
                         print("No blackjack, you lose.")
                 else:
                     print("No Blackjack! No insurance payout.")
+'''
+If the player has Blackjack and the dealer has an Ace, they’ll be offered Even Money instead of insurance.
+We’ve already learned that although it has a different name, Even Money produces the same outcome as insurance would.
+Remember, if you bet £10, make Blackjack and then accept Even Money, you get £20 back for a profit of £10. If you turn
+down Even Money and the dealer makes Blackjack as well, it’s a push and you get your money back.
+If you turn down Even Money and the dealer doesn’t make Blackjack, you get the all-important 3 to 2 payout and make
+a profit of £15. 
+'''
 
 
-
+#''' Swap between rigged and non rigged decks.
 
 msgDivider("Welcome to Toni's BJ Lounge")
 deck = generateDeck(suits, suitValue, cards, cardValue)
-#riggedDeck = generateDeck(suits, suitValue, riggedCards, riggedCardValue) # Used for testing :>
 initialSize = len(deck)
 run = True
 while run:
@@ -157,3 +172,25 @@ while run:
     if len(deck) <= initialSize * random.uniform(.1, .25): # Reshuffle randomly between 75%-90% remains.
         msgDivider("Reshuffled Deck")
         deck = generateDeck(suits, suitValue, cards, cardValue)
+
+
+# _____ Rigged Deck ______ Used for testing :>
+'''
+riggedCards = ["A", "10", "J", "K", "Q"]
+riggedCardValue = {"A":11, "10":10, "J":10, "K":10, "Q":10}
+
+# _____ Rigged Deck _____
+msgDivider("Welcome to Toni's BJ Lounge")
+riggedDeck = generateDeck(suits, suitValue, riggedCards, riggedCardValue) # Used for testing :>
+initialSize = len(riggedDeck)
+run = True
+while run:
+    gameStart(riggedDeck)
+    cont = input("Would you like to continue? y/n ")
+    if not yesNo(cont):
+        run = False
+        break
+    if len(riggedDeck) <= initialSize * random.uniform(.1, .25):
+        msgDivider("Reshuffled Deck")
+        riggedDeck = generateDeck(suits, suitValue, riggedCards, riggedCardValue)
+'''
