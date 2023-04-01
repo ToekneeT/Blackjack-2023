@@ -13,6 +13,12 @@ suitValue = {"Spades":"\u2664", "Hearts":"\u2661", "Clubs":"\u2667", "Diamonds":
 cards = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "K", "Q"]
 cardValue = {"A":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "J":10, "K":10, "Q":10}
 
+# _____ Rigged Deck ______ Used for testing :>
+'''
+riggedCards = ["A", "10", "J", "K", "Q"]
+riggedCardValue = {"A":11, "10":10, "J":10, "K":10, "Q":10}
+'''
+# _____ Rigged Deck _____
 
 def msgDivider(msg):
     if msg == "Blackjack!":
@@ -110,7 +116,7 @@ def gameStart(deck):
             firstCard = False
 
         print(f"\nPlayer Total: {playerValue}\n")
-        if playerValue == 21:
+        if playerValue == 21 and dealerValue != 21:
             msgDivider("Blackjack!")
             continue
 
@@ -127,14 +133,19 @@ def gameStart(deck):
                         print("Insurance wasn't purchased, no payout.")
                     printCards(dealerCards[0], False)
                     printCards(dealerCards[1], False)
+                    if isBJ(playerCards):
+                        print("Blackjack! Push.")
+                    else:
+                        print("No blackjack, you lose.")
                 else:
-                    print("No Blackjack! No payout.")
+                    print("No Blackjack! No insurance payout.")
 
 
 
 
 msgDivider("Welcome to Toni's BJ Lounge")
 deck = generateDeck(suits, suitValue, cards, cardValue)
+#riggedDeck = generateDeck(suits, suitValue, riggedCards, riggedCardValue) # Used for testing :>
 initialSize = len(deck)
 run = True
 while run:
@@ -142,6 +153,7 @@ while run:
     cont = input("Would you like to continue? y/n ")
     if not yesNo(cont):
         run = False
+        break
     if len(deck) <= initialSize * random.uniform(.1, .25): # Reshuffle randomly between 75%-90% remains.
         msgDivider("Reshuffled Deck")
         deck = generateDeck(suits, suitValue, cards, cardValue)
