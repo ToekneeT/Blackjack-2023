@@ -135,10 +135,19 @@ def insurance(dealerHand, playerHand): # Checks if the player wants to purchase 
             msgDivider(f"No Blackjack! No {winType} payout.")
 
 
+# Hit or stay function. Hidden surrender function inside.
 
-def hit(hand, deck, choice):
+
+def surrender(dealerHand, choice):
+    if (not isBJ(dealerHand)) and choice:
+        msgDivider("You surrendered your hand. Half your bet is returned.")
+        return True
+    return False
+
+
+def hit(hand, deck, choice): # Deals a card, then returns card value if yes.
     if yesNo(choice):
-        dealCard(hand, deck)
+        return dealCard(hand, deck)
 
 
 def gameStart(deck):
@@ -147,7 +156,7 @@ def gameStart(deck):
     playerValue = 0
     dealerValue = 0
 
-    while len(playerCards) < 2:
+    while len(playerCards) < 2: # Change to allow hits later (more than len of 2). Works for now due to testing.
         playerValue += dealCard(playerCards, deck)
         dealerValue += dealCard(dealerCards, deck)
         firstCard = True
@@ -176,14 +185,12 @@ def gameStart(deck):
                 continue
             insurance(dealerCards, playerCards)
 
-'''
-If the player has Blackjack and the dealer has an Ace, they’ll be offered Even Money instead of insurance.
-We’ve already learned that although it has a different name, Even Money produces the same outcome as insurance would.
-Remember, if you bet £10, make Blackjack and then accept Even Money, you get £20 back for a profit of £10. If you turn
-down Even Money and the dealer makes Blackjack as well, it’s a push and you get your money back.
-If you turn down Even Money and the dealer doesn’t make Blackjack, you get the all-important 3 to 2 payout and make
-a profit of £15. 
-'''
+            relinquish = False
+            #if input("Hit or stay? h/s ") == "surrender":
+            #    relinquish = True
+            if surrender(dealerCards, relinquish): # Hit or stay function. Hidden surrender function inside.
+                continue
+
 
 
 #''' Swap between rigged and non rigged decks.
