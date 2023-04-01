@@ -18,7 +18,7 @@ def msgDivider(msg):
     if msg == "Blackjack!":
         print("_*" * 10, end=" ")
         print(msg, end=" ")
-        print("_*" * 10)
+        print("*_" * 10)
         print("\n")
     else:
         print()
@@ -65,7 +65,7 @@ def isBJ(hand):
     return False
 
 
-def yesNo(choice):
+def yesNo(choice): # Returns a bool based on yes or no user input.
     while choice.lower() not in ["y", "y.", "yes", "yes.", "n", "n.", "no", "no.", ""]:
         choice = input("Invalid input, try again: ")
     if choice.lower() in ["y", "y." "yes", "yes.", ""]:
@@ -95,24 +95,44 @@ def aces(hand, handTotal): # Prevents card total greater than 21 due to aces. Re
 
 def insurance(dealerHand, playerHand): # Checks if the player wants to purchase insurance when dealer shows an Ace.
     insurance = False
-    if dealerHand[1].value == 11:
-        insure = input("Would you like to purchase insurance? y/n ")
+    if dealerHand[1].value == 11 and isBJ(playerHand):
+        insure = input("Would you like even money? y/n ")
+        winType = "Even money"
         if yesNo(insure):
             insurance = True
         if isBJ(dealerHand):
             print("Dealer Blackjack!")
             if insurance:
-                print("Insurance Paid Out.")
+                msgDivider(f"{winType} paid Out.")
             else:
-                print("Insurance wasn't purchased, no payout.")
+                msgDivider(f"{winType} wasn't purchased, no payout.")
             printCards(dealerHand[0], False)
             printCards(dealerHand[1], False)
             if isBJ(playerHand):
-                print("Blackjack! Push.")
+                msgDivider("Blackjack! Push.")
             else:
-                print("No blackjack, you lose.")
+                msgDivider("No blackjack, you lose.")
         else:
-            print("No Blackjack! No insurance payout.")
+            msgDivider(f"No Blackjack! No {winType} payout.")
+    elif dealerHand[1].value == 11 and not isBJ(playerHand):
+        insure = input("Would you like to purchase insurance? y/n ")
+        winType = "Insurance"
+        if yesNo(insure):
+            insurance = True
+        if isBJ(dealerHand):
+            msgDivider("Dealer Blackjack!")
+            if insurance:
+                msgDivider(f"{winType} Paid Out.")
+            else:
+                msgDivider(f"{winType} wasn't purchased, no payout.")
+            printCards(dealerHand[0], False)
+            printCards(dealerHand[1], False)
+            if isBJ(playerHand):
+                msgDivider("Blackjack! Push.")
+            else:
+                msgDivider("No blackjack, you lose.")
+        else:
+            msgDivider(f"No Blackjack! No {winType} payout.")
 
 
 
@@ -141,16 +161,19 @@ def gameStart(deck):
         print("Dealer Cards: ") # Dealer card printout. Slightly different since one card needs to be hidden.
         for card in dealerCards:
             printCards(card, firstCard)
-            if not(firstCard):
+            if not firstCard:
                 print(f"Dealer Card: {card.value}")
             firstCard = False
 
         print(f"\nPlayer Total: {playerValue}\n")
-        if playerValue == 21 and dealerValue != 21:
-            msgDivider("Blackjack!")
-            continue
 
         if len(dealerCards) == 2: # BJ Checker; Insurance y/n
+            if (playerValue == 21 and dealerCards[1].value != 11) and (playerValue == 21 and dealerValue == 21):
+                msgDivider("Dealer Blackjack; Push!")
+                continue
+            if (playerValue == 21 and dealerCards[1].value != 11) and (playerValue == 21 and dealerValue != 21):
+                msgDivider("Blackjack!")
+                continue
             insurance(dealerCards, playerCards)
 
 '''
