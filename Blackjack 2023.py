@@ -15,14 +15,15 @@ cardValue = {"A":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10
 
 
 def msgDivider(msg):
+    print()
     print("_" * 20, end=" ")
     print(msg, end=" ")
     print("_" * 20)
+    print("\n")
 
 
 def generateDeck(suits, suitValue, cards, cardValue): # Generates decks. Useful for multi-deck games.
     deck = []
-
     for suit in suits:
         for card in cards:
             deck.append(Card(suitValue[suit], card, cardValue[card]))
@@ -59,12 +60,25 @@ def isBJ(hand):
 
 
 def yesNo(choice):
-    while choice.lower() not in ["y", "y.", "yes", "yes.", "n", "n.", "no", "no."]:
+    while choice.lower() not in ["y", "y.", "yes", "yes.", "n", "n.", "no", "no.", ""]:
         choice = input("Invalid input, try again: ")
-    if choice.lower() in ["y", "y." "yes", "yes."]:
+    if choice.lower() in ["y", "y." "yes", "yes.", ""]:
         return True
     elif choice.lower() in ["n", "n." "no", "no."]:
         return False
+
+
+def dealCard(hand, deck): # Deal card from deck, remove, returns dealt card value.
+    dealtCard = random.choice(deck)
+    hand.append(dealtCard)
+    deck.remove(dealtCard)
+    return dealtCard.value
+
+
+def hit(choice):
+    if yesNo(choice):
+        print("temp")
+
 
 
 def gameStart(deck):
@@ -75,16 +89,9 @@ def gameStart(deck):
     insurance = False
 
     while len(playerCards) < 2:
-
-        dealtCard = random.choice(deck)
-        playerCards.append(dealtCard)
-        deck.remove(dealtCard)
-        playerValue += dealtCard.value
-
+        playerValue += dealCard(playerCards, deck)
+        dealerValue += dealCard(dealerCards, deck)
         firstCard = True
-        dealtCard = random.choice(deck)
-        dealerCards.append(dealtCard)
-        dealerValue += dealtCard.value
 
         print("Player Cards: ")
         for card in playerCards:
@@ -105,16 +112,27 @@ def gameStart(deck):
                 if yesNo(insure):
                     insurance = True
                 if isBJ(dealerCards):
-                    print("Dealer Blackjack! Insurance Paid Out.")
+                    print("Dealer Blackjack!")
+                    if insurance:
+                        print("Insurance Paid Out.")
+                    else:
+                        print("Insurance wasn't purchased, no payout.")
                     printCards(dealerCards[0], False)
                     printCards(dealerCards[1], False)
                 else:
-                    print("No Blackjack! No Pay Out.")
-
+                    print("No Blackjack! No payout.")
 
 
 
 
 msgDivider("Welcome to Toni's BJ Lounge")
-deckOne = generateDeck(suits, suitValue, cards, cardValue)
-gameStart(deckOne)
+deck = generateDeck(suits, suitValue, cards, cardValue)
+run = True
+while run:
+    gameStart(deck)
+    cont = input("Would you like to continue? y/n ")
+    if not yesNo(cont):
+        run = False
+    if len(deck) <= 10:
+        msgDivider("Reshuffled Deck")
+        deck = generateDeck(suits, suitValue, cards, cardValue)
