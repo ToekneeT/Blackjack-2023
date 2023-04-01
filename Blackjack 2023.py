@@ -136,13 +136,12 @@ def gameStart(deck):
 msgDivider("Welcome to Toni's BJ Lounge")
 deck = generateDeck(suits, suitValue, cards, cardValue)
 initialSize = len(deck)
-remaining = [.1, .15, .2, .25]
 run = True
 while run:
     gameStart(deck)
     cont = input("Would you like to continue? y/n ")
     if not yesNo(cont):
         run = False
-    if len(deck) <= initialSize * random.choice(remaining): # Reshuffle randomly between 75%-90% remains.
+    if len(deck) <= initialSize * random.uniform(.1, .25): # Reshuffle randomly between 75%-90% remains.
         msgDivider("Reshuffled Deck")
         deck = generateDeck(suits, suitValue, cards, cardValue)
