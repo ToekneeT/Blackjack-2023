@@ -93,6 +93,29 @@ def aces(hand, handTotal): # Prevents card total greater than 21 due to aces. Re
     return handTotal
 
 
+def insurance(dealerHand, playerHand): # Checks if the player wants to purchase insurance when dealer shows an Ace.
+    insurance = False
+    if dealerHand[1].value == 11:
+        insure = input("Would you like to purchase insurance? y/n ")
+        if yesNo(insure):
+            insurance = True
+        if isBJ(dealerHand):
+            print("Dealer Blackjack!")
+            if insurance:
+                print("Insurance Paid Out.")
+            else:
+                print("Insurance wasn't purchased, no payout.")
+            printCards(dealerHand[0], False)
+            printCards(dealerHand[1], False)
+            if isBJ(playerHand):
+                print("Blackjack! Push.")
+            else:
+                print("No blackjack, you lose.")
+        else:
+            print("No Blackjack! No insurance payout.")
+
+
+
 def hit(hand, deck, choice):
     if yesNo(choice):
         dealCard(hand, deck)
@@ -103,7 +126,6 @@ def gameStart(deck):
     dealerCards = []
     playerValue = 0
     dealerValue = 0
-    insurance = False
 
     while len(playerCards) < 2:
         playerValue += dealCard(playerCards, deck)
@@ -128,25 +150,9 @@ def gameStart(deck):
             msgDivider("Blackjack!")
             continue
 
-        if len(dealerCards) == 2: # BJ checker; Insurance y/n
-            if dealerCards[1].value == 11:
-                insure = input("Would you like to purchase insurance? y/n ")
-                if yesNo(insure):
-                    insurance = True
-                if isBJ(dealerCards):
-                    print("Dealer Blackjack!")
-                    if insurance:
-                        print("Insurance Paid Out.")
-                    else:
-                        print("Insurance wasn't purchased, no payout.")
-                    printCards(dealerCards[0], False)
-                    printCards(dealerCards[1], False)
-                    if isBJ(playerCards):
-                        print("Blackjack! Push.")
-                    else:
-                        print("No blackjack, you lose.")
-                else:
-                    print("No Blackjack! No insurance payout.")
+        if len(dealerCards) == 2: # BJ Checker; Insurance y/n
+            insurance(dealerCards, playerCards)
+
 '''
 If the player has Blackjack and the dealer has an Ace, they’ll be offered Even Money instead of insurance.
 We’ve already learned that although it has a different name, Even Money produces the same outcome as insurance would.
