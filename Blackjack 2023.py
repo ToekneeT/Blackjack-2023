@@ -15,11 +15,18 @@ cardValue = {"A":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10
 
 
 def msgDivider(msg):
-    print()
-    print("_" * 20, end=" ")
-    print(msg, end=" ")
-    print("_" * 20)
-    print("\n")
+    if msg == "Blackjack!":
+        print()
+        print("_*" * 10, end=" ")
+        print(msg, end=" ")
+        print("_*" * 10)
+        print("\n")
+    else:
+        print()
+        print("_" * 20, end=" ")
+        print(msg, end=" ")
+        print("_" * 20)
+        print("\n")
 
 
 def generateDeck(suits, suitValue, cards, cardValue): # Generates decks. Useful for multi-deck games.
@@ -75,10 +82,9 @@ def dealCard(hand, deck): # Deal card from deck, remove, returns dealt card valu
     return dealtCard.value
 
 
-def hit(choice):
+def hit(hand, deck, choice):
     if yesNo(choice):
-        print("temp")
-
+        dealCard(hand, deck)
 
 
 def gameStart(deck):
@@ -106,6 +112,10 @@ def gameStart(deck):
 
         print(f"\nPlayer Total: {playerValue}\n")
 
+        if playerValue == 21:
+            msgDivider("Blackjack!")
+            continue
+
         if len(dealerCards) == 2: # BJ checker; Insurance y/n
             if dealerCards[1].value == 10 or dealerCards[1].value == 11:
                 insure = input("Would you like to purchase insurance? y/n ")
@@ -127,12 +137,13 @@ def gameStart(deck):
 
 msgDivider("Welcome to Toni's BJ Lounge")
 deck = generateDeck(suits, suitValue, cards, cardValue)
+initialSize = len(deck)
 run = True
 while run:
     gameStart(deck)
     cont = input("Would you like to continue? y/n ")
     if not yesNo(cont):
         run = False
-    if len(deck) <= 10:
+    if len(deck) <= initialSize * .2: # When 20% of the deck remains, reshuffle.
         msgDivider("Reshuffled Deck")
         deck = generateDeck(suits, suitValue, cards, cardValue)
