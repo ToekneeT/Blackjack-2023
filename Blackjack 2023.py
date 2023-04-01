@@ -16,7 +16,6 @@ cardValue = {"A":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10
 
 def msgDivider(msg):
     if msg == "Blackjack!":
-        print()
         print("_*" * 10, end=" ")
         print(msg, end=" ")
         print("_*" * 10)
@@ -111,7 +110,6 @@ def gameStart(deck):
             firstCard = False
 
         print(f"\nPlayer Total: {playerValue}\n")
-
         if playerValue == 21:
             msgDivider("Blackjack!")
             continue
@@ -138,12 +136,13 @@ def gameStart(deck):
 msgDivider("Welcome to Toni's BJ Lounge")
 deck = generateDeck(suits, suitValue, cards, cardValue)
 initialSize = len(deck)
+remaining = [.1, .15, .2, .25]
 run = True
 while run:
     gameStart(deck)
     cont = input("Would you like to continue? y/n ")
     if not yesNo(cont):
         run = False
-    if len(deck) <= initialSize * .2: # When 20% of the deck remains, reshuffle.
+    if len(deck) <= initialSize * random.choice(remaining): # Reshuffle randomly between 75%-90% remains.
         msgDivider("Reshuffled Deck")
         deck = generateDeck(suits, suitValue, cards, cardValue)
