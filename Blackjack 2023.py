@@ -202,9 +202,47 @@ def gameStart(deck):
                 if surrender(dealerCards, True):
                     continue
             elif nextMove == 1:
-                print("You hit.")
+                newCard = dealCard(playerCards, deck)
+                playerValue += newCard
+                print("Player Cards: ")
+                for card in playerCards:
+                    printCards(card, False)
+                print(f"\nPlayer Total: {playerValue}\n")
+                if playerValue > 21:
+                    print("Bust!")
+                    continue
             else:
                 print("You stayed.")
+
+    while len(playerCards) > 2 and playerValue < 21:
+        firstCard = True
+        print("Player Cards: ")
+        for card in playerCards:
+            printCards(card, False)
+
+        print("Dealer Cards: ") # Dealer card printout. Slightly different since one card needs to be hidden.
+        for card in dealerCards:
+            printCards(card, firstCard)
+            if not firstCard:
+                print(f"Dealer Card: {card.value}")
+            firstCard = False
+
+        print(f"\nPlayer Total: {playerValue}\n")
+        if playerValue > 21:
+            print("Bust!")
+            continue
+
+        nextMove = nextPlay(input("Hit or stay? h/s "))
+        if nextMove == 2:
+            if surrender(dealerCards, True):
+                continue
+        elif nextMove == 1:
+            newCard = dealCard(playerCards, deck)
+            playerValue += newCard
+        else:
+            print("You stayed.")
+
+
 
 
 
