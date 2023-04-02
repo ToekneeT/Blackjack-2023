@@ -204,28 +204,31 @@ def gameStart(deck):
             elif nextMove == 1:
                 newCard = dealCard(playerCards, deck)
                 playerValue += newCard
-                print("Player Cards: ")
-                for card in playerCards:
-                    printCards(card, False)
-                print(f"\nPlayer Total: {playerValue}\n")
                 if playerValue > 21:
+                    print("Player Cards: ")
+                    for card in playerCards:
+                        printCards(card, False)
+                    print(f"\nPlayer Total: {playerValue}\n")
                     print("Bust!")
                     continue
             else:
                 print("You stayed.")
 
+    firstCard = True
     while len(playerCards) > 2 and playerValue < 21:
-        firstCard = True
+        playerValue = aces(playerCards, playerValue)
+        dealerValue = aces(dealerCards, dealerValue)
+
         print("Player Cards: ")
         for card in playerCards:
             printCards(card, False)
 
         print("Dealer Cards: ") # Dealer card printout. Slightly different since one card needs to be hidden.
         for card in dealerCards:
-            printCards(card, firstCard)
+            printCards(card, firstCard) # Need to fix. Something with firstCard. Doesn't show hidden and non hidden card just yet due to constant looping of hitting.
             if not firstCard:
                 print(f"Dealer Card: {card.value}")
-            firstCard = False
+            #firstCard = False
 
         print(f"\nPlayer Total: {playerValue}\n")
         if playerValue > 21:
@@ -239,6 +242,10 @@ def gameStart(deck):
         elif nextMove == 1:
             newCard = dealCard(playerCards, deck)
             playerValue += newCard
+            print(f"\nPlayer Total: {playerValue}\n")
+            if playerValue > 21:
+                print("Bust!")
+                continue
         else:
             print("You stayed.")
 
