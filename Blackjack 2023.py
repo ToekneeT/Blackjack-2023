@@ -66,21 +66,21 @@ def isBJ(hand):
 
 
 def yesNo(choice): # Returns a bool based on yes or no user input.
-    while choice.lower() not in ["y", "y.", "yes", "yes.", "n", "n.", "no", "no.", ""]:
+    while choice.lower() not in ["y", "y.", "yes", "yes.", "n", "n.", "no", "no.", "", "."]:
         choice = input("Invalid input, try again: ")
     if choice.lower() in ["y", "y." "yes", "yes.", ""]:
         return True
-    elif choice.lower() in ["n", "n." "no", "no."]:
+    elif choice.lower() in ["n", "n." "no", "no.", "."]:
         return False
 
 
 def nextPlay(choice): # Returns a 0 if stay, 1 if hit, or 2 if surrender.
     while choice.lower() not in ["surr", "stay", "s", "surrender", "give up", "g", "h", "hit",
-    "y", "y.", "yes", "yes.", "n", "n.", "no", "no.", ""]:
+    "y", "y.", "yes", "yes.", "n", "n.", "no", "no.", "", "."]:
         choice = input("Invalid input, try again: ")
     if choice.lower() in ["h", "hit", "y", "y.", "yes", "yes.", ""]:
         return 1
-    elif choice.lower() in ["stay", "s", "n", "n.", "no", "no."]:
+    elif choice.lower() in ["stay", "s", "n", "n.", "no", "no.", "."]:
         return 0
     elif choice.lower() in ["surr", "surrender"]:
         return 2
@@ -212,9 +212,8 @@ def gameStart(deck):
                     print("Bust!")
                     continue
             else:
-                print("You stayed.")
+                print("You stayed.") # Need to add more to this. Aka Dealer draws.
 
-    firstCard = True
     while len(playerCards) > 2 and playerValue < 21:
         playerValue = aces(playerCards, playerValue)
         dealerValue = aces(dealerCards, dealerValue)
@@ -223,12 +222,14 @@ def gameStart(deck):
         for card in playerCards:
             printCards(card, False)
 
-        print("Dealer Cards: ") # Dealer card printout. Slightly different since one card needs to be hidden.
-        for card in dealerCards:
-            printCards(card, firstCard) # Need to fix. Something with firstCard. Doesn't show hidden and non hidden card just yet due to constant looping of hitting.
-            if not firstCard:
+        print("Dealer Cards: ")
+        for i in range(len(dealerCards)):
+            if i == 0 and len(dealerCards) <= 2:
+                printCards(dealerCards[i], True)
+            else:
+                printCards(dealerCards[i], False)
                 print(f"Dealer Card: {card.value}")
-            #firstCard = False
+
 
         print(f"\nPlayer Total: {playerValue}\n")
         if playerValue > 21:
@@ -236,10 +237,9 @@ def gameStart(deck):
             continue
 
         nextMove = nextPlay(input("Hit or stay? h/s "))
-        if nextMove == 2:
-            if surrender(dealerCards, True):
-                continue
-        elif nextMove == 1:
+        while nextMove == 2:
+            nextMove = nextPlay(input("Invalid input, try again: h/s "))
+        if nextMove == 1:
             newCard = dealCard(playerCards, deck)
             playerValue += newCard
             print(f"\nPlayer Total: {playerValue}\n")
@@ -248,6 +248,7 @@ def gameStart(deck):
                 continue
         else:
             print("You stayed.")
+            break # Need to add more to this. Aka Dealer draws.
 
 
 
