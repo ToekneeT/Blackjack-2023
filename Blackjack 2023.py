@@ -74,6 +74,18 @@ def yesNo(choice): # Returns a bool based on yes or no user input.
         return False
 
 
+def nextPlay(choice): # Returns a 0 if stay, 1 if hit, or 2 if surrender.
+    while choice.lower() not in ["surr", "stay", "s", "surrender", "give up", "g", "h", "hit",
+    "y", "y.", "yes", "yes.", "n", "n.", "no", "no.", ""]:
+        choice = input("Invalid input, try again: ")
+    if choice.lower() in ["h", "hit", "y", "y.", "yes", "yes.", ""]:
+        return 1
+    elif choice.lower() in ["stay", "s", "n", "n.", "no", "no."]:
+        return 0
+    elif choice.lower() in ["surr", "surrender"]:
+        return 2
+
+
 def dealCard(hand, deck): # Deal card from deck, remove, returns dealt card value.
     dealtCard = random.choice(deck)
     hand.append(dealtCard)
@@ -185,11 +197,14 @@ def gameStart(deck):
                 continue
             insurance(dealerCards, playerCards)
 
-            relinquish = False
-            #if input("Hit or stay? h/s ") == "surrender":
-            #    relinquish = True
-            if surrender(dealerCards, relinquish): # Hit or stay function. Hidden surrender function inside.
-                continue
+            nextMove = nextPlay(input("Hit or stay? h/s "))
+            if nextMove == 2:
+                if surrender(dealerCards, True):
+                    continue
+            elif nextMove == 1:
+                print("You hit.")
+            else:
+                print("You stayed.")
 
 
 
