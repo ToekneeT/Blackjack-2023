@@ -90,18 +90,19 @@ def dealCard(hand, deck): # Deal card from deck, remove, returns dealt card valu
     dealtCard = random.choice(deck)
     hand.append(dealtCard)
     deck.remove(dealtCard)
+    # Print card out. But issue is it'll print out hidden dealer card.
     return dealtCard.value
 
 
 def aces(hand, handTotal): # Prevents card total greater than 21 due to aces. Returns hand total.
     count = 0
-    while handTotal > 21:
+    while handTotal > 21 and count < len(hand):
         if hand[count].value == 11:
             hand[count].value = 1
             handTotal -= 10
             count += 1
         else:
-            count +=1
+            count += 1
     return handTotal
 
 
@@ -165,11 +166,8 @@ def hit(hand, deck, choice): # Deals a card, then returns card value if yes.
         return dealCard(hand, deck)
 
 
-def playerHitLoop(playerHand, playerValue, dealerHand, dealerValue):
+def playerHitLoop(playerHand, playerValue, dealerHand, dealerValue, deck):
     while len(playerHand) > 2 and playerValue < 21:
-        playerValue = aces(playerHand, playerValue)
-        dealerValue = aces(dealerHand, dealerValue)
-
         print("Player Cards: ")
         for card in playerHand:
             printCards(card, False)
@@ -182,10 +180,10 @@ def playerHitLoop(playerHand, playerValue, dealerHand, dealerValue):
                 printCards(dealerHand[i], False)
                 print(f"Dealer Card: {dealerHand[i].value}")
 
-
+        playerValue = aces(playerHand, playerValue)
         print(f"\nPlayer Total: {playerValue}\n")
         if playerValue > 21:
-            print("Bust!")
+            msgDivider("Bust!")
             continue
 
         nextMove = nextPlay(input("Hit or stay? h/s "))
@@ -194,6 +192,7 @@ def playerHitLoop(playerHand, playerValue, dealerHand, dealerValue):
         if nextMove == 1:
             newCard = dealCard(playerHand, deck)
             playerValue += newCard
+            playerValue = aces(playerHand, playerValue)
             print(f"\nPlayer Total: {playerValue}\n")
             if playerValue > 21:
                 print("Bust!")
@@ -208,6 +207,7 @@ def gameStart(deck):
     dealerCards = []
     playerValue = 0
     dealerValue = 0
+
 
     while len(playerCards) < 2: # Change to allow hits later (more than len of 2). Works for now due to testing.
         playerValue += dealCard(playerCards, deck)
@@ -247,6 +247,7 @@ def gameStart(deck):
                 elif nextMove == 1:
                     newCard = dealCard(playerCards, deck)
                     playerValue += newCard
+                    playerValue = aces(playerCards, playerValue)
                     if playerValue > 21:
                         print("Player Cards: ")
                         for card in playerCards:
@@ -257,8 +258,8 @@ def gameStart(deck):
                 else:
                     print("You stayed.") # Need to add more to this. Aka Dealer draws.
 
-    if (len(playerCards) > 2 and playerValue < 21) and not isBJ(dealerCards):
-        playerHitLoop(playerCards, playerValue, dealerCards, dealerValue)
+    #if (len(playerCards) > 2 and playerValue < 21) and not isBJ(dealerCards):
+    playerHitLoop(playerCards, playerValue, dealerCards, dealerValue, deck)
 
 
 
@@ -285,7 +286,8 @@ msgDivider("Thanks for playing!")
 
 # _____ Rigged Deck ______ Used for testing :>
 '''
-riggedCards = ["A", "10", "J", "K", "Q"]
+#riggedCards = ["A", "10", "J", "K", "Q"]
+riggedCards = ["A", "A", "A", "A"]
 riggedCardValue = {"A":11, "10":10, "J":10, "K":10, "Q":10}
 
 # _____ Rigged Deck _____
