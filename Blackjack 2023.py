@@ -106,6 +106,7 @@ def aces(hand, handTotal): # Prevents card total greater than 21 due to aces. Re
 
 
 def insurance(dealerHand, playerHand): # Checks if the player wants to purchase insurance when dealer shows an Ace.
+    # Returns 0 if dealer BJ, otherwise 1.
     insurance = False
     if dealerHand[1].value == 11 and isBJ(playerHand):
         insure = input("Would you like even money? y/n ")
@@ -143,8 +144,10 @@ def insurance(dealerHand, playerHand): # Checks if the player wants to purchase 
                 msgDivider("Blackjack! Push.")
             else:
                 msgDivider("No blackjack, you lose.")
+            return 0
         else:
             msgDivider(f"No Blackjack! No {winType} payout.")
+    return 1
 
 
 # Hit or stay function. Hidden surrender function inside.
@@ -160,6 +163,44 @@ def surrender(dealerHand, choice):
 def hit(hand, deck, choice): # Deals a card, then returns card value if yes.
     if yesNo(choice):
         return dealCard(hand, deck)
+
+
+def playerHitLoop(playerHand, playerValue, dealerHand, dealerValue):
+    while len(playerHand) > 2 and playerValue < 21:
+        playerValue = aces(playerHand, playerValue)
+        dealerValue = aces(dealerHand, dealerValue)
+
+        print("Player Cards: ")
+        for card in playerHand:
+            printCards(card, False)
+
+        print("Dealer Cards: ")
+        for i in range(len(dealerHand)):
+            if i == 0 and len(dealerHand) <= 2:
+                printCards(dealerHand[i], True)
+            else:
+                printCards(dealerHand[i], False)
+                print(f"Dealer Card: {dealerHand[i].value}")
+
+
+        print(f"\nPlayer Total: {playerValue}\n")
+        if playerValue > 21:
+            print("Bust!")
+            continue
+
+        nextMove = nextPlay(input("Hit or stay? h/s "))
+        while nextMove == 2:
+            nextMove = nextPlay(input("Invalid input, try again: h/s "))
+        if nextMove == 1:
+            newCard = dealCard(playerHand, deck)
+            playerValue += newCard
+            print(f"\nPlayer Total: {playerValue}\n")
+            if playerValue > 21:
+                print("Bust!")
+                continue
+        else:
+            print("You stayed.")
+            break # Need to add more to this. Aka Dealer draws.
 
 
 def gameStart(deck):
@@ -195,60 +236,29 @@ def gameStart(deck):
             if (playerValue == 21 and dealerCards[1].value != 11) and (playerValue == 21 and dealerValue != 21):
                 msgDivider("Blackjack!")
                 continue
-            insurance(dealerCards, playerCards)
-
-            nextMove = nextPlay(input("Hit or stay? h/s "))
-            if nextMove == 2:
-                if surrender(dealerCards, True):
-                    continue
-            elif nextMove == 1:
-                newCard = dealCard(playerCards, deck)
-                playerValue += newCard
-                if playerValue > 21:
-                    print("Player Cards: ")
-                    for card in playerCards:
-                        printCards(card, False)
-                    print(f"\nPlayer Total: {playerValue}\n")
-                    print("Bust!")
-                    continue
-            else:
-                print("You stayed.") # Need to add more to this. Aka Dealer draws.
-
-    while len(playerCards) > 2 and playerValue < 21:
-        playerValue = aces(playerCards, playerValue)
-        dealerValue = aces(dealerCards, dealerValue)
-
-        print("Player Cards: ")
-        for card in playerCards:
-            printCards(card, False)
-
-        print("Dealer Cards: ")
-        for i in range(len(dealerCards)):
-            if i == 0 and len(dealerCards) <= 2:
-                printCards(dealerCards[i], True)
-            else:
-                printCards(dealerCards[i], False)
-                print(f"Dealer Card: {card.value}")
-
-
-        print(f"\nPlayer Total: {playerValue}\n")
-        if playerValue > 21:
-            print("Bust!")
-            continue
-
-        nextMove = nextPlay(input("Hit or stay? h/s "))
-        while nextMove == 2:
-            nextMove = nextPlay(input("Invalid input, try again: h/s "))
-        if nextMove == 1:
-            newCard = dealCard(playerCards, deck)
-            playerValue += newCard
-            print(f"\nPlayer Total: {playerValue}\n")
-            if playerValue > 21:
-                print("Bust!")
+            if insurance(dealerCards, playerCards) == 0:
                 continue
-        else:
-            print("You stayed.")
-            break # Need to add more to this. Aka Dealer draws.
+
+            if playerValue < 21:
+                nextMove = nextPlay(input("Hit or stay? h/s "))
+                if nextMove == 2:
+                    if surrender(dealerCards, True):
+                        continue
+                elif nextMove == 1:
+                    newCard = dealCard(playerCards, deck)
+                    playerValue += newCard
+                    if playerValue > 21:
+                        print("Player Cards: ")
+                        for card in playerCards:
+                            printCards(card, False)
+                        print(f"\nPlayer Total: {playerValue}\n")
+                        msgDivider("Bust!")
+                        continue
+                else:
+                    print("You stayed.") # Need to add more to this. Aka Dealer draws.
+
+    if (len(playerCards) > 2 and playerValue < 21) and not isBJ(dealerCards):
+        playerHitLoop(playerCards, playerValue, dealerCards, dealerValue)
 
 
 
@@ -270,6 +280,8 @@ while run:
         msgDivider("Reshuffled Deck")
         deck = generateDeck(suits, suitValue, cards, cardValue)
 
+msgDivider("Thanks for playing!")
+
 
 # _____ Rigged Deck ______ Used for testing :>
 '''
@@ -277,7 +289,7 @@ riggedCards = ["A", "10", "J", "K", "Q"]
 riggedCardValue = {"A":11, "10":10, "J":10, "K":10, "Q":10}
 
 # _____ Rigged Deck _____
-msgDivider("Welcome to Toni's BJ Lounge")
+msgDivider("Rigged Deck Testing")
 riggedDeck = generateDeck(suits, suitValue, riggedCards, riggedCardValue) # Used for testing :>
 initialSize = len(riggedDeck)
 run = True
@@ -290,4 +302,6 @@ while run:
     if len(riggedDeck) <= initialSize * random.uniform(.1, .25):
         msgDivider("Reshuffled Deck")
         riggedDeck = generateDeck(suits, suitValue, riggedCards, riggedCardValue)
+
+msgDivider("Thanks for playing!")
 '''
