@@ -74,9 +74,9 @@ def yesNo(choice): # Returns a bool based on yes or no user input.
         return False
 
 
-def nextPlay(choice): # Returns a 0 if stay, 1 if hit, or 2 if surrender.
+def nextPlay(choice): # Returns a 0 if stay, 1 if hit, 2 if surrender, or 3 if double down.
     while choice.lower() not in ["surr", "stay", "s", "surrender", "give up", "g", "h", "hit",
-    "y", "y.", "yes", "yes.", "n", "n.", "no", "no.", "", "."]:
+    "y", "y.", "yes", "yes.", "n", "n.", "no", "no.", "", ".", "d", "double", "dd"]:
         choice = input("Invalid input, try again: ")
     if choice.lower() in ["h", "hit", "y", "y.", "yes", "yes.", ""]:
         return 1
@@ -84,6 +84,8 @@ def nextPlay(choice): # Returns a 0 if stay, 1 if hit, or 2 if surrender.
         return 0
     elif choice.lower() in ["surr", "surrender"]:
         return 2
+    elif choice.lower() in ["d", "double", "dd"]:
+        return 3
 
 
 def dealCard(hand, deck): # Deal card from deck, remove, returns dealt card value.
@@ -150,14 +152,23 @@ def insurance(dealerHand, playerHand): # Checks if the player wants to purchase 
     return 1
 
 
-# Hit or stay function. Hidden surrender function inside.
-
-
-def surrender(dealerHand, choice):
-    if (not isBJ(dealerHand)) and choice:
+def surrender(dealerHand):
+    if (not isBJ(dealerHand)):
         msgDivider("You surrendered your hand. Half your bet is returned.")
         return True
     return False
+
+
+def doubleDown(playerHand, playerValue, deck):
+    msgDivider("You doubled your bet.")
+    newCard = dealCard(playerHand, deck)
+    playerValue += newCard
+    printCards(playerHand[len(playerHand) - 1], False)
+    playerValue = aces(playerHand, playerValue)
+    print(f"\nPlayer Total: {playerValue}\n")
+    if playerValue > 21:
+        print("Bust!")
+    return True
 
 
 def hit(hand, deck, choice): # Deals a card, then returns card value if yes.
@@ -186,7 +197,7 @@ def playerHitLoop(playerHand, playerValue, dealerHand, dealerValue, deck):
             continue
 
         nextMove = nextPlay(input("Hit or stay? h/s "))
-        while nextMove == 2:
+        while nextMove == 2 or nextMove == 3:
             nextMove = nextPlay(input("Invalid input, try again: h/s "))
         if nextMove == 1:
             newCard = dealCard(playerHand, deck)
@@ -197,9 +208,11 @@ def playerHitLoop(playerHand, playerValue, dealerHand, dealerValue, deck):
             if playerValue > 21:
                 print("Bust!")
                 continue
-        else:
+        elif nextMove == 0:
             print("You stayed.")
             break # Need to add more to this. Aka Dealer draws.
+        else: # Failsafe?
+            print("You shouldn't reach this point.")
 
 
 def gameStart(deck):
@@ -215,6 +228,7 @@ def gameStart(deck):
         firstCard = True
         playerValue = aces(playerCards, playerValue)
         dealerValue = aces(dealerCards, dealerValue)
+        dd = False
 
         print("Player Cards: ")
         for card in playerCards:
@@ -242,7 +256,7 @@ def gameStart(deck):
             if playerValue < 21:
                 nextMove = nextPlay(input("Hit or stay? h/s "))
                 if nextMove == 2:
-                    if surrender(dealerCards, True):
+                    if surrender(dealerCards):
                         continue
                 elif nextMove == 1:
                     newCard = dealCard(playerCards, deck)
@@ -257,11 +271,16 @@ def gameStart(deck):
                         print(f"\nPlayer Total: {playerValue}\n")
                         msgDivider("Bust!")
                         continue
-                else:
+                elif nextMove == 3:
+                    dd = doubleDown(playerCards, playerValue, deck)
+                elif nextMove == 0:
                     print("You stayed.") # Need to add more to this. Aka Dealer draws.
+                else: # Failsafe?
+                    print("You shouldn't reach this point.")
 
-    #if (len(playerCards) > 2 and playerValue < 21) and not isBJ(dealerCards):
-    playerHitLoop(playerCards, playerValue, dealerCards, dealerValue, deck)
+    if not dd:
+        playerHitLoop(playerCards, playerValue, dealerCards, dealerValue, deck)
+    #if dd and playerValue < 21: # Dealer draws.
 
 
 
