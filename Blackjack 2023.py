@@ -90,7 +90,6 @@ def dealCard(hand, deck): # Deal card from deck, remove, returns dealt card valu
     dealtCard = random.choice(deck)
     hand.append(dealtCard)
     deck.remove(dealtCard)
-    # Print card out. But issue is it'll print out hidden dealer card.
     return dealtCard.value
 
 
@@ -192,6 +191,7 @@ def playerHitLoop(playerHand, playerValue, dealerHand, dealerValue, deck):
         if nextMove == 1:
             newCard = dealCard(playerHand, deck)
             playerValue += newCard
+            printCards(playerHand[len(playerHand) - 1], False)
             playerValue = aces(playerHand, playerValue)
             print(f"\nPlayer Total: {playerValue}\n")
             if playerValue > 21:
@@ -247,7 +247,9 @@ def gameStart(deck):
                 elif nextMove == 1:
                     newCard = dealCard(playerCards, deck)
                     playerValue += newCard
+                    printCards(playerCards[len(playerCards) - 1], False)
                     playerValue = aces(playerCards, playerValue)
+                    print(f"\nPlayer Total: {playerValue}\n")
                     if playerValue > 21:
                         print("Player Cards: ")
                         for card in playerCards:
