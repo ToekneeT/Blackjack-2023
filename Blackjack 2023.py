@@ -66,25 +66,34 @@ def isBJ(hand):
 
 
 def yesNo(choice): # Returns a bool based on yes or no user input.
-    while choice.lower() not in ["y", "y.", "yes", "yes.", "n", "n.", "no", "no.", "", "."]:
+    yesOptions = ["y", "y.", "yes", "yes.", ""]
+    noOptions = ["n", "n.", "no", "no.", "."]
+
+    while choice.lower() not in yesOptions + noOptions:
         choice = input("Invalid input, try again: ")
-    if choice.lower() in ["y", "y." "yes", "yes.", ""]:
+    if choice.lower() in yesOptions:
         return True
-    elif choice.lower() in ["n", "n." "no", "no.", "."]:
+    elif choice.lower() in noOptions:
         return False
 
 
 def nextPlay(choice): # Returns a 0 if stay, 1 if hit, 2 if surrender, or 3 if double down.
-    while choice.lower() not in ["surr", "stay", "s", "surrender", "give up", "g", "h", "hit",
-    "y", "y.", "yes", "yes.", "n", "n.", "no", "no.", "", ".", "d", "double", "dd"]:
+    yesOptions = ["y", "y.", "yes", "yes.", ""]
+    noOptions = ["n", "n.", "no", "no.", "."]
+    surrOptions = ["surrender", "surr"]
+    hitOptions = ["h", "hit"]
+    ddOptions = ["d", "double", "dd"]
+    stayOptions = ["s", "stay"]
+
+    while choice.lower() not in yesOptions + noOptions + surrOptions + hitOptions + ddOptions:
         choice = input("Invalid input, try again: ")
-    if choice.lower() in ["h", "hit", "y", "y.", "yes", "yes.", ""]:
+    if choice.lower() in yesOptions + hitOptions:
         return 1
-    elif choice.lower() in ["stay", "s", "n", "n.", "no", "no.", "."]:
+    elif choice.lower() in stayOptions + noOptions:
         return 0
-    elif choice.lower() in ["surr", "surrender"]:
+    elif choice.lower() in surrOptions:
         return 2
-    elif choice.lower() in ["d", "double", "dd"]:
+    elif choice.lower() in ddOptions:
         return 3
 
 
@@ -213,6 +222,10 @@ def playerHitLoop(playerHand, playerValue, dealerHand, dealerValue, deck):
             break # Need to add more to this. Aka Dealer draws.
         else: # Failsafe?
             print("You shouldn't reach this point.")
+
+
+# Split Function. Separate the two cards into separate lists, or remove one into a new one. Act upon the two separately.
+
 
 
 def gameStart(deck):
