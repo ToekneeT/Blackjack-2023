@@ -188,13 +188,16 @@ def double_down(player_hand, player_value, deck):
     return True
 
 
+# Currently an unused function. Will leave for now in case it ends up being used later.
+# Was replaced with next_move func.
 # Deals a card, then returns card value if yes.
-def hit(hand, deck, choice):
-    if yes_no(choice):
-        return deal_card(hand, deck)
+#def hit(hand, deck, choice):
+#    if yes_no(choice):
+#        return deal_card(hand, deck)
 
 
 # Deals the player a new card, keeps asking until they either stay or bust.
+# Function uses dealer_hit_loop inside when the player stands.
 def player_hit_loop(
         player_hand,
         player_value,
@@ -242,11 +245,12 @@ def player_hit_loop(
 
 
 # Deals the dealer a card, keeps going until either >= 17 or bust.
+# Function is used inside of player_hit_loop.
 def dealer_hit_loop(dealer_hand, dealer_value, deck):
     print("Dealer Hand: ")
     for card in dealer_hand:
         print_cards(card, False)
-    dealer_value = aces(dealer_hand, dealer_value)
+    #dealer_value = aces(dealer_hand, dealer_value)
     print(f"\nDealer Total: {dealer_value}\n")
 
     if dealer_value < 17:
@@ -349,6 +353,7 @@ def game_start(deck):
                         continue
                 elif next_move == 3:
                     dd = double_down(player_hand, player_value, deck)
+                    continue
                 elif next_move == 0:
                     print("You stood.")
                     dealer_hit_loop(dealer_hand, dealer_value, deck)
@@ -364,7 +369,9 @@ def game_start(deck):
             dealer_hand,
             dealer_value,
             deck)
-    # if dd and player_value < 21: # Dealer draws.
+    elif dd and player_value < 21: # Dealer draws.
+        dealer_hit_loop(dealer_hand, dealer_value, deck)
+        winner(player_hand, player_value, dealer_hand, dealer_value)
 
 
 # ''' Swap between rigged and non rigged decks.
