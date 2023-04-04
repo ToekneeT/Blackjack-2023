@@ -127,6 +127,14 @@ def deal_card(hand, deck):
     return dealt_card.value
 
 
+# Gets the hand value from the list.
+def get_hand_value(hand):
+    hand_total = 0
+    for card in hand:
+        hand_total += card.value
+    return hand_total
+
+
 # Prevents card total greater than 21 due to aces. Returns hand total.
 def aces(hand, hand_total):
     count = 0
@@ -237,8 +245,8 @@ def player_hit_loop(
                 continue
         elif next_move == 0:
             print("You stood.")
-            dealer_hit_loop(dealer_hand, dealer_value, deck)
-            winner(player_hand, player_value, dealer_hand, dealer_value)
+            dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
+            winner(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand))
             break  # Need to add more to this. Aka Dealer draws.
         else:  # Failsafe?
             print("You shouldn't reach this point.")
@@ -283,6 +291,8 @@ def winner(player_hand, player_value, dealer_hand, dealer_value):
         msg_divider("Dealer wins!")
     elif dealer_value < player_value:
         msg_divider("Player wins!")
+    elif dealer_value == player_value:
+        msg_divider("Push!")
 
 
 # Split Function. Separate the two cards into separate lists, or remove
@@ -352,12 +362,12 @@ def game_start(deck):
                         msg_divider("Bust!")
                         continue
                 elif next_move == 3:
-                    dd = double_down(player_hand, player_value, deck)
+                    dd = double_down(player_hand, get_hand_value(player_hand), deck)
                     continue
                 elif next_move == 0:
                     print("You stood.")
-                    dealer_hit_loop(dealer_hand, dealer_value, deck)
-                    winner(player_hand, player_value, dealer_hand, dealer_value)
+                    dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
+                    winner(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand))
                     continue
                 else:  # Failsafe?
                     print("You shouldn't reach this point.")
@@ -365,16 +375,20 @@ def game_start(deck):
     if not dd:
         player_hit_loop(
             player_hand,
-            player_value,
+            get_hand_value(player_hand),
             dealer_hand,
-            dealer_value,
+            get_hand_value(dealer_hand),
             deck)
     elif dd and player_value < 21: # Dealer draws.
-        dealer_hit_loop(dealer_hand, dealer_value, deck)
-        winner(player_hand, player_value, dealer_hand, dealer_value)
+        dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
+        winner(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand))
+
+    if get_hand_value(dealer_hand) == 21:
+        dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
+        winner(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand))
 
 
-# ''' Swap between rigged and non rigged decks.
+#''' Swap between rigged and non rigged decks.
 msg_divider("Welcome to Toni's BJ Lounge")
 size = str(input("How many decks would you like to play? 1, 2, 6, or 8? "))
 while size not in ["1", "2", "6", "8"]:
@@ -404,13 +418,16 @@ msg_divider("Thanks for playing!")
 
 # _____ Rigged Deck ______ Used for testing :>
 '''
-#riggedCards = ["A", "10", "J", "K", "Q"]
-riggedCards = ["A", "A", "A", "A"]
+riggedCards = ["A", "10", "J", "K", "Q"]
+#riggedCards = ["A", "A", "A", "A"]
 riggedCardValue = {"A":11, "10":10, "J":10, "K":10, "Q":10}
 
 # _____ Rigged Deck _____
 msg_divider("Rigged Deck Testing")
-rigged_deck = generate_deck(suits, suit_value, riggedCards, riggedCardValue) # Used for testing :>
+size = str(input("How many decks would you like to play? 1, 2, 6, or 8? "))
+while size not in ["1", "2", "6", "8"]:
+    size = str(input("Invalid input, try again: 1, 2, 6, or 8? "))
+rigged_deck = generate_deck(suits, suit_value, riggedCards, riggedCardValue, size) # Used for testing :>
 initial_size = len(rigged_deck)
 run = True
 while run:
