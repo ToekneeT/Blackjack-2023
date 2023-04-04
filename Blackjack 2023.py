@@ -202,11 +202,11 @@ def player_hit_loop(
         dealer_value,
         deck):
     while len(player_hand) > 2 and player_value < 21:
-        print("Player Cards: ")
+        print("Player Hand: ")
         for card in player_hand:
             print_cards(card, False)
 
-        print("Dealer Cards: ")
+        print("Dealer Hand: ")
         for i in range(len(dealer_hand)):
             if i == 0 and len(dealer_hand) <= 2:
                 print_cards(dealer_hand[i], True)
@@ -235,7 +235,7 @@ def player_hit_loop(
         elif next_move == 0:
             print("You stayed.")
             dealer_hit_loop(dealer_hand, dealer_value, deck)
-            winner(player_value, dealer_value)
+            winner(player_hand, player_value, dealer_hand, dealer_value)
             break  # Need to add more to this. Aka Dealer draws.
         else:  # Failsafe?
             print("You shouldn't reach this point.")
@@ -246,7 +246,7 @@ def dealer_hit_loop(dealer_hand, dealer_value, deck):
     if dealer_value < 17:
         msg_divider("The dealer will now draw.")
 
-    print("Dealer Cards: ")
+    print("Dealer Hand: ")
     for card in dealer_hand:
         print_cards(card, False)
     dealer_value = aces(dealer_hand, dealer_value)
@@ -263,7 +263,16 @@ def dealer_hit_loop(dealer_hand, dealer_value, deck):
 
 
 # Determines the winner based on card values.
-def winner(player_value, dealer_value):
+def winner(player_hand, player_value, dealer_hand, dealer_value):
+    msg_divider("Ending Hands: ")
+    print(f"Player Hand: ")
+    for card in player_hand:
+        print_cards(card, False)
+    print(f"Dealer Hand: ")
+    for card in dealer_hand:
+        print_cards(card, False)
+    msg_divider(f"Player Total: {player_value}")
+    msg_divider(f"Dealer Total: {dealer_value}")
     if dealer_value > 21:
         msg_divider("Dealer Bust! You win!")
     elif dealer_value > player_value:
@@ -292,13 +301,13 @@ def game_start(deck):
         dealer_value = aces(dealer_hand, dealer_value)
         dd = False
 
-        print("Player Cards: ")
+        print("Player Hand: ")
         for card in player_hand:
             print_cards(card, False)
 
         # Dealer card printout. Slightly different since one card needs to be
         # hidden.
-        print("Dealer Cards: ")
+        print("Dealer Hand: ")
         for card in dealer_hand:
             print_cards(card, first_card)
             if not first_card:
@@ -332,7 +341,7 @@ def game_start(deck):
                     player_value = aces(player_hand, player_value)
                     print(f"\nPlayer Total: {player_value}\n")
                     if player_value > 21:
-                        print("Player Cards: ")
+                        print("Player Hand: ")
                         for card in player_hand:
                             print_cards(card, False)
                         print(f"\nPlayer Total: {player_value}\n")
@@ -343,7 +352,7 @@ def game_start(deck):
                 elif next_move == 0:
                     print("You stayed.")
                     dealer_hit_loop(dealer_hand, dealer_value, deck)
-                    winner(player_value, dealer_value)
+                    winner(player_hand, player_value, dealer_hand, dealer_value)
                     continue
                 else:  # Failsafe?
                     print("You shouldn't reach this point.")
