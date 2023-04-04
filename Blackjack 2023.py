@@ -28,11 +28,12 @@ def msgDivider(msg):
         print("\n")
 
 
-def generateDeck(suits, suitValue, cards, cardValue): # Generates decks. Useful for multi-deck games.
+def generateDeck(suits, suitValue, cards, cardValue, size):
     deck = []
-    for suit in suits:
-        for card in cards:
-            deck.append(Card(suitValue[suit], card, cardValue[card]))
+    for i in range(int(size)):
+        for suit in suits:
+            for card in cards:
+                deck.append(Card(suitValue[suit], card, cardValue[card]))
 
     return deck
 
@@ -87,10 +88,10 @@ def nextPlay(choice): # Returns a 0 if stay, 1 if hit, 2 if surrender, or 3 if d
 
     while choice.lower() not in yesOptions + noOptions + surrOptions + hitOptions + ddOptions + stayOptions:
         choice = input("Invalid input, try again: ")
-    if choice.lower() in yesOptions + hitOptions:
-        return 1
-    elif choice.lower() in stayOptions + noOptions:
+    if choice.lower() in stayOptions + noOptions:
         return 0
+    elif choice.lower() in yesOptions + hitOptions:
+        return 1
     elif choice.lower() in surrOptions:
         return 2
     elif choice.lower() in ddOptions:
@@ -281,22 +282,30 @@ def gameStart(deck):
 
 
 
-
 #''' Swap between rigged and non rigged decks.
 
 msgDivider("Welcome to Toni's BJ Lounge")
-deck = generateDeck(suits, suitValue, cards, cardValue)
+size = str(input("How many decks would you like to play? 1, 2, 6, or 8? "))
+while size not in ["1", "2", "6", "8"]:
+    size = str(input("Invalid input, try again: 1, 2, 6, or 8? "))
+deck = generateDeck(suits, suitValue, cards, cardValue, size)
 initialSize = len(deck)
 run = True
+
 while run:
     gameStart(deck)
     cont = input("Would you like to continue? y/n ")
     if not yesNo(cont):
         run = False
         break
-    if len(deck) <= initialSize * random.uniform(.1, .25): # Reshuffle randomly between 75%-90% remains.
-        msgDivider("Reshuffled Deck")
-        deck = generateDeck(suits, suitValue, cards, cardValue)
+    if int(size) != 1:
+        if len(deck) <= initialSize * random.uniform(.1, .25): # Reshuffle randomly between 75%-90% remains.
+            msgDivider("Reshuffled Deck")
+            deck = generateDeck(suits, suitValue, cards, cardValue, size)
+    else:
+        if len(deck) <= initialSize * random.uniform(.2, .3):
+            msgDivider("Reshuffled Deck")
+            deck = generateDeck(suits, suitValue, cards, cardValue, size)
 
 msgDivider("Thanks for playing!")
 
