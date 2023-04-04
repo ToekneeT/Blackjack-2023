@@ -213,26 +213,26 @@ def playerHitLoop(playerHand, playerValue, dealerHand, dealerValue, deck):
 
 
 def gameStart(deck):
-    playerCards = []
-    dealerCards = []
+    playerHand = []
+    dealerHand = []
     playerValue = 0
     dealerValue = 0
 
 
-    while len(playerCards) < 2: # Change to allow hits later (more than len of 2). Works for now due to testing.
-        playerValue += dealCard(playerCards, deck)
-        dealerValue += dealCard(dealerCards, deck)
+    while len(playerHand) < 2: # Change to allow hits later (more than len of 2). Works for now due to testing.
+        playerValue += dealCard(playerHand, deck)
+        dealerValue += dealCard(dealerHand, deck)
         firstCard = True
-        playerValue = aces(playerCards, playerValue)
-        dealerValue = aces(dealerCards, dealerValue)
+        playerValue = aces(playerHand, playerValue)
+        dealerValue = aces(dealerHand, dealerValue)
         dd = False
 
         print("Player Cards: ")
-        for card in playerCards:
+        for card in playerHand:
             printCards(card, False)
 
         print("Dealer Cards: ") # Dealer card printout. Slightly different since one card needs to be hidden.
-        for card in dealerCards:
+        for card in dealerHand:
             printCards(card, firstCard)
             if not firstCard:
                 print(f"Dealer Card: {card.value}")
@@ -240,43 +240,43 @@ def gameStart(deck):
 
         print(f"\nPlayer Total: {playerValue}\n")
 
-        if len(dealerCards) == 2: # BJ Checker; Insurance y/n
-            if (playerValue == 21 and dealerCards[1].value != 11) and (playerValue == 21 and dealerValue == 21):
+        if len(dealerHand) == 2: # BJ Checker; Insurance y/n
+            if (playerValue == 21 and dealerHand[1].value != 11) and (playerValue == 21 and dealerValue == 21):
                 msgDivider("Dealer Blackjack; Push!")
                 continue
-            if (playerValue == 21 and dealerCards[1].value != 11) and (playerValue == 21 and dealerValue != 21):
+            if (playerValue == 21 and dealerHand[1].value != 11) and (playerValue == 21 and dealerValue != 21):
                 msgDivider("Blackjack!")
                 continue
-            if insurance(dealerCards, playerCards) == 0:
+            if insurance(dealerHand, playerHand) == 0:
                 continue
 
             if playerValue < 21:
                 nextMove = nextPlay(input("Hit or stay? h/s "))
                 if nextMove == 2:
-                    if surrender(dealerCards):
+                    if surrender(dealerHand):
                         continue
                 elif nextMove == 1:
-                    newCard = dealCard(playerCards, deck)
+                    newCard = dealCard(playerHand, deck)
                     playerValue += newCard
-                    printCards(playerCards[len(playerCards) - 1], False)
-                    playerValue = aces(playerCards, playerValue)
+                    printCards(playerHand[len(playerHand) - 1], False)
+                    playerValue = aces(playerHand, playerValue)
                     print(f"\nPlayer Total: {playerValue}\n")
                     if playerValue > 21:
                         print("Player Cards: ")
-                        for card in playerCards:
+                        for card in playerHand:
                             printCards(card, False)
                         print(f"\nPlayer Total: {playerValue}\n")
                         msgDivider("Bust!")
                         continue
                 elif nextMove == 3:
-                    dd = doubleDown(playerCards, playerValue, deck)
+                    dd = doubleDown(playerHand, playerValue, deck)
                 elif nextMove == 0:
                     print("You stayed.") # Need to add more to this. Aka Dealer draws.
                 else: # Failsafe?
                     print("You shouldn't reach this point.")
 
     if not dd:
-        playerHitLoop(playerCards, playerValue, dealerCards, dealerValue, deck)
+        playerHitLoop(playerHand, playerValue, dealerHand, dealerValue, deck)
     #if dd and playerValue < 21: # Dealer draws.
 
 
