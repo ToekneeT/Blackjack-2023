@@ -199,7 +199,7 @@ def double_down(player_hand, player_value, deck):
 # Currently an unused function. Will leave for now in case it ends up being used later.
 # Was replaced with next_move func.
 # Deals a card, then returns card value if yes.
-#def hit(hand, deck, choice):
+# def hit(hand, deck, choice):
 #    if yes_no(choice):
 #        return deal_card(hand, deck)
 
@@ -246,7 +246,11 @@ def player_hit_loop(
         elif next_move == 0:
             print("You stood.")
             dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
-            winner(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand))
+            winner(
+                player_hand,
+                get_hand_value(player_hand),
+                dealer_hand,
+                get_hand_value(dealer_hand))
             break  # Need to add more to this. Aka Dealer draws.
         else:  # Failsafe?
             print("You shouldn't reach this point.")
@@ -258,7 +262,7 @@ def dealer_hit_loop(dealer_hand, dealer_value, deck):
     print("Dealer Hand: ")
     for card in dealer_hand:
         print_cards(card, False)
-    #dealer_value = aces(dealer_hand, dealer_value)
+    # dealer_value = aces(dealer_hand, dealer_value)
     print(f"\nDealer Total: {dealer_value}\n")
 
     if dealer_value < 17:
@@ -271,7 +275,6 @@ def dealer_hit_loop(dealer_hand, dealer_value, deck):
             print_cards(card, False)
         dealer_value = aces(dealer_hand, dealer_value)
         print(f"\nDealer Total: {dealer_value}\n")
-
 
 
 # Determines the winner based on card values.
@@ -362,12 +365,18 @@ def game_start(deck):
                         msg_divider("Bust!")
                         continue
                 elif next_move == 3:
-                    dd = double_down(player_hand, get_hand_value(player_hand), deck)
+                    dd = double_down(
+                        player_hand, get_hand_value(player_hand), deck)
                     continue
                 elif next_move == 0:
                     print("You stood.")
-                    dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
-                    winner(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand))
+                    dealer_hit_loop(
+                        dealer_hand, get_hand_value(dealer_hand), deck)
+                    winner(
+                        player_hand,
+                        get_hand_value(player_hand),
+                        dealer_hand,
+                        get_hand_value(dealer_hand))
                     continue
                 else:  # Failsafe?
                     print("You shouldn't reach this point.")
@@ -379,16 +388,24 @@ def game_start(deck):
             dealer_hand,
             get_hand_value(dealer_hand),
             deck)
-    elif dd and player_value < 21: # Dealer draws.
+    elif dd and player_value < 21:  # Dealer draws.
         dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
-        winner(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand))
+        winner(
+            player_hand,
+            get_hand_value(player_hand),
+            dealer_hand,
+            get_hand_value(dealer_hand))
 
     if get_hand_value(dealer_hand) == 21:
         dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
-        winner(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand))
+        winner(
+            player_hand,
+            get_hand_value(player_hand),
+            dealer_hand,
+            get_hand_value(dealer_hand))
 
 
-#''' Swap between rigged and non rigged decks.
+# ''' Swap between rigged and non rigged decks.
 msg_divider("Welcome to Toni's BJ Lounge")
 size = str(input("How many decks would you like to play? 1, 2, 6, or 8? "))
 while size not in ["1", "2", "6", "8"]:
