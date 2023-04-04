@@ -303,7 +303,7 @@ while run:
             msgDivider("Reshuffled Deck")
             deck = generateDeck(suits, suitValue, cards, cardValue, size)
     else:
-        if len(deck) <= initialSize * random.uniform(.2, .3):
+        if len(deck) <= initialSize * random.uniform(.45, .55):
             msgDivider("Reshuffled Deck")
             deck = generateDeck(suits, suitValue, cards, cardValue, size)
 
