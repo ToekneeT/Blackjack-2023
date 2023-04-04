@@ -233,7 +233,7 @@ def player_hit_loop(
                 print("Bust!")
                 continue
         elif next_move == 0:
-            print("You stayed.")
+            print("You stood.")
             dealer_hit_loop(dealer_hand, dealer_value, deck)
             winner(player_hand, player_value, dealer_hand, dealer_value)
             break  # Need to add more to this. Aka Dealer draws.
@@ -243,14 +243,14 @@ def player_hit_loop(
 
 # Deals the dealer a card, keeps going until either >= 17 or bust.
 def dealer_hit_loop(dealer_hand, dealer_value, deck):
-    if dealer_value < 17:
-        msg_divider("The dealer will now draw.")
-
     print("Dealer Hand: ")
     for card in dealer_hand:
         print_cards(card, False)
     dealer_value = aces(dealer_hand, dealer_value)
     print(f"\nDealer Total: {dealer_value}\n")
+
+    if dealer_value < 17:
+        msg_divider("The dealer will now draw.")
 
     while dealer_value < 17:
         new_card = deal_card(dealer_hand, deck)
@@ -350,7 +350,7 @@ def game_start(deck):
                 elif next_move == 3:
                     dd = double_down(player_hand, player_value, deck)
                 elif next_move == 0:
-                    print("You stayed.")
+                    print("You stood.")
                     dealer_hit_loop(dealer_hand, dealer_value, deck)
                     winner(player_hand, player_value, dealer_hand, dealer_value)
                     continue
