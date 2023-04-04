@@ -104,7 +104,7 @@ def next_play(choice):
     surrender_options = ["surrender", "surr"]
     hit_options = ["h", "hit"]
     dd_options = ["d", "double", "dd"]
-    stay_options = ["s", "stay"]
+    stay_options = ["s", "stay", "stand"]
 
     while choice.lower() not in yes_options + no_options + surrender_options + \
             hit_options + dd_options + stay_options:
@@ -194,6 +194,7 @@ def hit(hand, deck, choice):
         return deal_card(hand, deck)
 
 
+# Deals the player a new card, keeps asking until they either stay or bust.
 def player_hit_loop(
         player_hand,
         player_value,
@@ -233,9 +234,42 @@ def player_hit_loop(
                 continue
         elif next_move == 0:
             print("You stayed.")
+            dealer_hit_loop(dealer_hand, dealer_value, deck)
+            winner(player_value, dealer_value)
             break  # Need to add more to this. Aka Dealer draws.
         else:  # Failsafe?
             print("You shouldn't reach this point.")
+
+
+# Deals the dealer a card, keeps going until either >= 17 or bust.
+def dealer_hit_loop(dealer_hand, dealer_value, deck):
+    if dealer_value < 17:
+        msg_divider("The dealer will now draw.")
+
+    print("Dealer Cards: ")
+    for card in dealer_hand:
+        print_cards(card, False)
+    dealer_value = aces(dealer_hand, dealer_value)
+    print(f"\nDealer Total: {dealer_value}\n")
+
+    while dealer_value < 17:
+        new_card = deal_card(dealer_hand, deck)
+        dealer_value += new_card
+        for card in dealer_hand:
+            print_cards(card, False)
+        dealer_value = aces(dealer_hand, dealer_value)
+        print(f"\nDealer Total: {dealer_value}\n")
+
+
+
+# Determines the winner based on card values.
+def winner(player_value, dealer_value):
+    if dealer_value > 21:
+        msg_divider("Dealer Bust! You win!")
+    elif dealer_value > player_value:
+        msg_divider("Dealer wins!")
+    elif dealer_value < player_value:
+        msg_divider("Player wins!")
 
 
 # Split Function. Separate the two cards into separate lists, or remove
@@ -307,8 +341,10 @@ def game_start(deck):
                 elif next_move == 3:
                     dd = double_down(player_hand, player_value, deck)
                 elif next_move == 0:
-                    # Need to add more to this. Aka Dealer draws.
                     print("You stayed.")
+                    dealer_hit_loop(dealer_hand, dealer_value, deck)
+                    winner(player_value, dealer_value)
+                    continue
                 else:  # Failsafe?
                     print("You shouldn't reach this point.")
 
