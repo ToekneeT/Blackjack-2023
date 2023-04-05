@@ -160,7 +160,7 @@ def insurance(dealer_hand, player_hand):
     insurance = yes_no(input(question))
 
     if is_blackjack(dealer_hand):
-        print("Dealer Blackjack!")
+        msg_divider("Dealer Blackjack!")
         print_cards(dealer_hand[0], False)
         print_cards(dealer_hand[1], False)
 
@@ -197,7 +197,6 @@ def double_down(player_hand, player_value, deck):
 
 
 # Deals the player a new card, keeps asking until they either stay or bust.
-# Function uses dealer_hit_loop inside when the player stands.
 def player_hit_loop(
         player_hand,
         player_value,
@@ -221,7 +220,7 @@ def player_hit_loop(
         print(f"\nPlayer Total: {player_value}\n")
         if player_value > 21:
             msg_divider("Bust!")
-            continue
+            break
 
         next_move = next_play(input("Hit or stay? h/s "))
         while next_move == 2 or next_move == 3:
@@ -234,22 +233,15 @@ def player_hit_loop(
             print(f"\nPlayer Total: {player_value}\n")
             if player_value > 21:
                 print("Bust!")
-                continue
+                break
         elif next_move == 0:
             print("You stood.")
-            dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
-            winner(
-                player_hand,
-                get_hand_value(player_hand),
-                dealer_hand,
-                get_hand_value(dealer_hand))
-            break  # Need to add more to this. Aka Dealer draws.
+            break
         else:  # Failsafe?
             print("You shouldn't reach this point.")
 
 
 # Deals the dealer a card, keeps going until either >= 17 or bust.
-# Function is used inside of player_hit_loop.
 def dealer_hit_loop(dealer_hand, dealer_value, deck):
     print("Dealer Hand: ")
     for card in dealer_hand:
@@ -309,6 +301,7 @@ def game_start(deck):
         player_value = aces(player_hand, player_value)
         dealer_value = aces(dealer_hand, dealer_value)
         dd = False
+        surr = False
 
         print("Player Hand: ")
         for card in player_hand:
@@ -341,7 +334,8 @@ def game_start(deck):
             if player_value < 21:
                 next_move = next_play(input("Hit or stay? h/s "))
                 if next_move == 2:
-                    if surrender(dealer_hand):
+                    surr = surrender(dealer_hand)
+                    if surr:
                         break
                 elif next_move == 1:
                     new_card = deal_card(player_hand, deck)
@@ -362,40 +356,30 @@ def game_start(deck):
                     continue
                 elif next_move == 0:
                     print("You stood.")
-                    dealer_hit_loop(
-                        dealer_hand, get_hand_value(dealer_hand), deck)
-                    winner(
-                        player_hand,
-                        get_hand_value(player_hand),
-                        dealer_hand,
-                        get_hand_value(dealer_hand))
                     break
                 else:  # Failsafe?
                     print("You shouldn't reach this point.")
 
-    if not dd:
+    if (not dd) and (not surr):
         player_hit_loop(
             player_hand,
             get_hand_value(player_hand),
             dealer_hand,
             get_hand_value(dealer_hand),
             deck)
+        dealer_hit_loop(
+            dealer_hand, get_hand_value(dealer_hand), deck)
     elif dd and player_value < 21:  # Dealer draws.
         dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
-        winner(
-            player_hand,
-            get_hand_value(player_hand),
-            dealer_hand,
-            get_hand_value(dealer_hand))
-
-    if get_hand_value(dealer_hand) == 21:
+    if get_hand_value(dealer_hand) == 21 and (not surr):
         dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
+
+    if not surr:
         winner(
             player_hand,
             get_hand_value(player_hand),
             dealer_hand,
             get_hand_value(dealer_hand))
-
 
 # ''' Swap between rigged and non rigged decks.
 msg_divider("Welcome to Toni's BJ Lounge")
