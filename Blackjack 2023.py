@@ -196,14 +196,6 @@ def double_down(player_hand, player_value, deck):
     return True
 
 
-# Currently an unused function. Will leave for now in case it ends up being used later.
-# Was replaced with next_move func.
-# Deals a card, then returns card value if yes.
-# def hit(hand, deck, choice):
-#    if yes_no(choice):
-#        return deal_card(hand, deck)
-
-
 # Deals the player a new card, keeps asking until they either stay or bust.
 # Function uses dealer_hit_loop inside when the player stands.
 def player_hit_loop(
@@ -338,11 +330,11 @@ def game_start(deck):
             if (player_value == 21 and dealer_hand[1].value != 11) and (
                     player_value == 21 and dealer_value == 21):
                 msg_divider("Dealer Blackjack; Push!")
-                continue
+                break
             if (player_value == 21 and dealer_hand[1].value != 11) and (
                     player_value == 21 and dealer_value != 21):
                 msg_divider("Blackjack!")
-                continue
+                break
             if insurance(dealer_hand, player_hand) == 0:
                 continue
 
@@ -350,7 +342,7 @@ def game_start(deck):
                 next_move = next_play(input("Hit or stay? h/s "))
                 if next_move == 2:
                     if surrender(dealer_hand):
-                        continue
+                        break
                 elif next_move == 1:
                     new_card = deal_card(player_hand, deck)
                     player_value += new_card
@@ -363,7 +355,7 @@ def game_start(deck):
                             print_cards(card, False)
                         print(f"\nPlayer Total: {player_value}\n")
                         msg_divider("Bust!")
-                        continue
+                        break
                 elif next_move == 3:
                     dd = double_down(
                         player_hand, get_hand_value(player_hand), deck)
@@ -377,7 +369,7 @@ def game_start(deck):
                         get_hand_value(player_hand),
                         dealer_hand,
                         get_hand_value(dealer_hand))
-                    continue
+                    break
                 else:  # Failsafe?
                     print("You shouldn't reach this point.")
 
