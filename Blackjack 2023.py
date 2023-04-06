@@ -97,17 +97,18 @@ def yes_no(choice):
         return False
 
 
-# Returns a 0 if stay, 1 if hit, 2 if surrender, or 3 if double down.
+# Returns a 0 if stay, 1 if hit, 2 if surrender, 3 if double down, or 4 if splitting.
 def next_play(choice):
-    yes_options = ["y", "y.", "yes", "yes.", ""]
-    no_options = ["n", "n.", "no", "no.", "."]
+    yes_options = ["y", "yes", ""]
+    no_options = ["n", "no", "."]
     surrender_options = ["surrender", "surr"]
     hit_options = ["h", "hit"]
     dd_options = ["d", "double", "dd"]
     stay_options = ["s", "stay", "stand"]
+    split_options = ["split", "sl", "spl"]
 
     while choice.lower() not in yes_options + no_options + surrender_options + \
-            hit_options + dd_options + stay_options:
+            hit_options + dd_options + stay_options + split_options:
         choice = input("Invalid input, try again: ")
     if choice.lower() in stay_options + no_options:
         return 0
@@ -117,6 +118,8 @@ def next_play(choice):
         return 2
     elif choice.lower() in dd_options:
         return 3
+    elif choice.lower() in split_options:
+        return 4
 
 
 # Deal card from deck, remove, returns dealt card value.
@@ -272,7 +275,9 @@ def winner(player_hand, player_value, dealer_hand, dealer_value):
         print_cards(card, False)
     msg_divider(f"Player Total: {player_value}")
     msg_divider(f"Dealer Total: {dealer_value}")
-    if dealer_value > 21:
+    if player_value > 21:
+        msg_divider("Bust! You lose")
+    elif dealer_value > 21:
         msg_divider("Dealer Bust! You win!")
     elif dealer_value > player_value:
         msg_divider("Dealer wins!")
@@ -284,10 +289,85 @@ def winner(player_hand, player_value, dealer_hand, dealer_value):
 
 # Split Function. Separate the two cards into separate lists, or remove
 # one into a new one. Act upon the two separately.
+def split(player_hand, player_hand_two, dealer_hand, deck):
+    dd_one = False
+    dd_two = False
+    for card in player_hand:
+        if card.name == "A":
+            card.value = 11
+
+    card = player_hand[1]
+    player_hand.remove(card)
+    player_hand_two.append(card)
+    msg_divider("You've split your hand.")
+    deal_card(player_hand, deck)
+    player_hand_value = get_hand_value(player_hand)
+    deal_card(player_hand_two, deck)
+    player_hand_two_value = get_hand_value(player_hand_two)
+    msg_divider("Hand 1: ")
+    for card in player_hand:
+        print_cards(card, False)
+    msg_divider("Hand 2: ")
+    for card in player_hand_two:
+        print_cards(card, False)
+
+    if player_hand[0].value != 11: # If not an ace card, can pull more cards.
+        msg_divider("Play on hand 1: ")
+        next_move = next_play(input("Hit or stay? h/s "))
+        while next_move == 2 or next_move == 4:
+            next_move = next_play(input("Invalid input, try again: h/s "))
+        if next_move == 1:
+            new_card = deal_card(player_hand, deck)
+            print_cards(player_hand[len(player_hand) - 1], False)
+            aces(player_hand, get_hand_value(player_hand))
+            print(f"\nPlayer Total: {get_hand_value(player_hand)}\n")
+            if get_hand_value(player_hand) > 21:
+                print("Player Hand: ")
+                for card in player_hand:
+                    print_cards(card, False)
+                print(f"\nPlayer Total: {get_hand_value(player_hand)}\n")
+                msg_divider("Bust!")
+
+        elif next_move == 0:
+            print("You stood.")
+                
+        elif next_move == 3:
+            dd_one = double_down(player_hand, get_hand_value(player_hand), deck)
+
+        if (not dd_one) and get_hand_value(player_hand) < 21:
+            player_hit_loop(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand), deck)
+        msg_divider("Play on hand 2: ")
+        next_move = next_play(input("Hit or stay? h/s "))
+        while next_move == 2 or next_move == 4:
+            next_move = next_play(input("Invalid input, try again: h/s "))
+        if next_move == 1:
+            new_card = deal_card(player_hand_two, deck)
+            print_cards(player_hand_two[len(player_hand_two) - 1], False)
+            aces(player_hand_two, get_hand_value(player_hand_two))
+            print(f"\nPlayer Total: {get_hand_value(player_hand)}\n")
+            if get_hand_value(player_hand_two) > 21:
+                print("Player Hand: ")
+                for card in player_hand:
+                    print_cards(card, False)
+                print(f"\nPlayer Total: {get_hand_value(player_hand_two)}\n")
+                msg_divider("Bust!")
+
+        elif next_move == 0:
+            print("You stood.")
+
+        elif next_move == 3:
+            dd_two = double_down(player_hand_two, get_hand_value(player_hand), deck)
+
+        if (not dd_two) and get_hand_value(player_hand_two) < 21:
+            player_hit_loop(player_hand_two, get_hand_value(player_hand_two), dealer_hand, get_hand_value(dealer_hand), deck)
+
+        return player_hand_two
 
 
+# Function that takes care of most of the game functions.
 def game_start(deck):
     player_hand = []
+    player_hand_two = []
     dealer_hand = []
     player_value = 0
     dealer_value = 0
@@ -302,6 +382,7 @@ def game_start(deck):
         dealer_value = aces(dealer_hand, dealer_value)
         dd = False
         surr = False
+        is_split = False
 
         print("Player Hand: ")
         for card in player_hand:
@@ -322,7 +403,7 @@ def game_start(deck):
         if len(dealer_hand) == 2:
             if (player_value == 21 and dealer_hand[1].value != 11) and (
                     player_value == 21 and dealer_value == 21):
-                msg_divider("Dealer Blackjack; Push!")
+                msg_divider("Dealer Blackjack! Push!")
                 break
             if (player_value == 21 and dealer_hand[1].value != 11) and (
                     player_value == 21 and dealer_value != 21):
@@ -333,6 +414,8 @@ def game_start(deck):
 
             if player_value < 21:
                 next_move = next_play(input("Hit or stay? h/s "))
+                while next_move == 4 and player_hand[0].value != player_hand[1].value:
+                    next_move = next_play(input("Invalid input. Can't split non equal value cards, try again: h/s "))
                 if next_move == 2:
                     surr = surrender(dealer_hand)
                     if surr:
@@ -357,29 +440,40 @@ def game_start(deck):
                 elif next_move == 0:
                     print("You stood.")
                     break
+                elif next_move == 4:
+                    player_hand_two = split(player_hand, player_hand_two, dealer_hand, deck)
+                    is_split = True
+                    break
                 else:  # Failsafe?
                     print("You shouldn't reach this point.")
 
-    if (not dd) and (not surr):
+    if (not dd) and (not surr) and (not is_split):
         player_hit_loop(
             player_hand,
             get_hand_value(player_hand),
             dealer_hand,
             get_hand_value(dealer_hand),
             deck)
-        dealer_hit_loop(
-            dealer_hand, get_hand_value(dealer_hand), deck)
+        if get_hand_value(player_hand) <= 21:
+            dealer_hit_loop(
+                dealer_hand, get_hand_value(dealer_hand), deck)
     elif dd and player_value < 21:  # Dealer draws.
         dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
     if get_hand_value(dealer_hand) == 21 and (not surr):
         dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
 
-    if not surr:
+    if not surr and (not is_split):
         winner(
             player_hand,
             get_hand_value(player_hand),
             dealer_hand,
             get_hand_value(dealer_hand))
+    elif (not surr) and is_split:
+        dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
+        msg_divider("Winner for player hand one: ")
+        winner(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand))
+        msg_divider("Winner for player hand two: ")
+        winner(player_hand_two, get_hand_value(player_hand_two), dealer_hand, get_hand_value(dealer_hand))
 
 # ''' Swap between rigged and non rigged decks.
 msg_divider("Welcome to Toni's BJ Lounge")
