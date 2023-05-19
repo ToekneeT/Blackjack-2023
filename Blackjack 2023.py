@@ -304,15 +304,15 @@ def split(player_hand, player_hand_two, dealer_hand, deck):
     player_hand_value = get_hand_value(player_hand)
     deal_card(player_hand_two, deck)
     player_hand_two_value = get_hand_value(player_hand_two)
-    msg_divider("Hand 1: ")
+    msg_divider("Hand 1:")
     for card in player_hand:
         print_cards(card, False)
-    msg_divider("Hand 2: ")
+    msg_divider("Hand 2:")
     for card in player_hand_two:
         print_cards(card, False)
 
     if player_hand[0].value != 11: # If not an ace card, can pull more cards.
-        msg_divider("Play on hand 1: ")
+        msg_divider("Play on hand 1:")
         next_move = next_play(input("Hit or stay? h/s "))
         while next_move == 2 or next_move == 4:
             next_move = next_play(input("Invalid input, try again: h/s "))
@@ -336,7 +336,7 @@ def split(player_hand, player_hand_two, dealer_hand, deck):
 
         if (not dd_one) and get_hand_value(player_hand) < 21:
             player_hit_loop(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand), deck)
-        msg_divider("Play on hand 2: ")
+        msg_divider("Play on hand 2:")
         next_move = next_play(input("Hit or stay? h/s "))
         while next_move == 2 or next_move == 4:
             next_move = next_play(input("Invalid input, try again: h/s "))
@@ -367,7 +367,7 @@ def split(player_hand, player_hand_two, dealer_hand, deck):
 # Function that takes care of most of the game functions.
 def game_start(deck):
     player_hand = []
-    player_hand_two = []
+    player_hand_two = [] # Possibly change to nested loop.
     dealer_hand = []
     player_value = 0
     dealer_value = 0
@@ -441,7 +441,7 @@ def game_start(deck):
                     print("You stood.")
                     break
                 elif next_move == 4:
-                    player_hand_two = split(player_hand, player_hand_two, dealer_hand, deck)
+                    player_hand_two = split(player_hand, player_hand_two, dealer_hand, deck) # Possibly put this into nested loop instead of single variable.
                     is_split = True
                     break
                 else:  # Failsafe?
@@ -470,9 +470,10 @@ def game_start(deck):
             get_hand_value(dealer_hand))
     elif (not surr) and is_split:
         dealer_hit_loop(dealer_hand, get_hand_value(dealer_hand), deck)
-        msg_divider("Winner for player hand one: ")
+        # If using nested lists for player hands, then use loop here to print out the winning decks.
+        msg_divider("Winner for player hand one:")
         winner(player_hand, get_hand_value(player_hand), dealer_hand, get_hand_value(dealer_hand))
-        msg_divider("Winner for player hand two: ")
+        msg_divider("Winner for player hand two:")
         winner(player_hand_two, get_hand_value(player_hand_two), dealer_hand, get_hand_value(dealer_hand))
 
 # ''' Swap between rigged and non rigged decks.
