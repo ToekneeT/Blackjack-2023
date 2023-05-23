@@ -504,7 +504,8 @@ def main():
     msg_divider("Thanks for playing!")
 # ''' Swap between rigged and non rigged decks.
 
-main()
+if __name__ == "__main__":
+    main()
 
 # _____ Rigged Deck ______ Used for testing :>
 '''
