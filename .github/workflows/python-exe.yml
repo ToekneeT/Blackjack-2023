@@ -31,4 +31,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Blackjack
-        path: "dist/Blackjack 2023.exe"
+        path: "dist/Blackjack_2023.exe"
