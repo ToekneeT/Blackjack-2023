@@ -26,7 +26,7 @@ jobs:
         pip install pyinstaller
     - name: Compile into .exe
       run: |
-        pyinstaller --onefile "Blackjack 2023.py"
+        pyinstaller --onefile "Blackjack_2023.py"
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
