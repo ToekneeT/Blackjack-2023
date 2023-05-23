@@ -476,33 +476,35 @@ def game_start(deck):
         msg_divider("Winner for player hand two:")
         winner(player_hand_two, get_hand_value(player_hand_two), dealer_hand, get_hand_value(dealer_hand))
 
+def main():
+    msg_divider("Welcome to Toni's BJ Lounge")
+    size = str(input("How many decks would you like to play? 1, 2, 6, or 8? "))
+    while size not in ["1", "2", "6", "8"]:
+        size = str(input("Invalid input, try again: 1, 2, 6, or 8? "))
+    deck = generate_deck(suits, suit_value, cards, card_value, size)
+    initial_size = len(deck)
+    run = True
+
+    while run:
+        game_start(deck)
+        cont = input("Would you like to continue? y/n ")
+        if not yes_no(cont):
+            run = False
+            break
+        if int(size) != 1:
+            # Reshuffle randomly between 75%-90% remains.
+            if len(deck) <= initial_size * random.uniform(.1, .25):
+                msg_divider("Reshuffled Deck")
+                deck = generate_deck(suits, suit_value, cards, card_value, size)
+        else:
+            if len(deck) <= initial_size * random.uniform(.45, .55):
+                msg_divider("Reshuffled Deck")
+                deck = generate_deck(suits, suit_value, cards, card_value, size)
+
+    msg_divider("Thanks for playing!")
 # ''' Swap between rigged and non rigged decks.
-msg_divider("Welcome to Toni's BJ Lounge")
-size = str(input("How many decks would you like to play? 1, 2, 6, or 8? "))
-while size not in ["1", "2", "6", "8"]:
-    size = str(input("Invalid input, try again: 1, 2, 6, or 8? "))
-deck = generate_deck(suits, suit_value, cards, card_value, size)
-initial_size = len(deck)
-run = True
 
-while run:
-    game_start(deck)
-    cont = input("Would you like to continue? y/n ")
-    if not yes_no(cont):
-        run = False
-        break
-    if int(size) != 1:
-        # Reshuffle randomly between 75%-90% remains.
-        if len(deck) <= initial_size * random.uniform(.1, .25):
-            msg_divider("Reshuffled Deck")
-            deck = generate_deck(suits, suit_value, cards, card_value, size)
-    else:
-        if len(deck) <= initial_size * random.uniform(.45, .55):
-            msg_divider("Reshuffled Deck")
-            deck = generate_deck(suits, suit_value, cards, card_value, size)
-
-msg_divider("Thanks for playing!")
-
+main()
 
 # _____ Rigged Deck ______ Used for testing :>
 '''
