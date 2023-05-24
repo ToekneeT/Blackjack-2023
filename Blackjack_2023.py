@@ -11,9 +11,11 @@ class Hand(object):
     def __init__(self, cards, money):
         self.cards = cards
         self.money = money
+        self.value = cards[0].value + cards[1].value
 
     def __init__(self, cards):
         self.cards = cards
+        self.value = cards[0].value + cards[1].value
 
     def print_hand(self, owner):
         print(f"{owner} hand: ")
@@ -50,6 +52,20 @@ class Hand(object):
         print("|" + " " * 5, end="|\n")
         print("|" + " " * 5, end="|\n")
         print(" " + "-" * 5)
+
+    def hand_value(self):
+        self.value = 0
+        for card in self.cards:
+            self.value += card.value
+        count = 0
+        while self.value > 21 and count < len(self.cards):
+            if self.cards[count].value == 11:
+                self.cards[count].value = 1
+                self.value -= 10
+                count += 1
+            else:
+                count += 1
+        return self.value
 
 
 suits = ["Spades", "Hearts", "Clubs", "Diamonds"]
@@ -520,6 +536,13 @@ def game_start(deck):
         msg_divider("Winner for player hand two:")
         winner(player_hand_two, get_hand_value(player_hand_two), dealer_hand, get_hand_value(dealer_hand))
 
+def test():
+    hand = [Card("\u2662", "A", 11), Card("\u2664", "J", 10), Card("\u2661", "9", 9)]
+    hand_two = [Card("\u2664", "J", 10), Card("\u2661", "9", 9)]
+    Hand(hand).print_hand("Player")
+    Hand(hand_two).print_dealer_hand()
+    print(Hand(hand).hand_value())
+
 def main():
     msg_divider("Welcome to Toni's BJ Lounge")
     size = str(input("How many decks would you like to play? 1, 2, 6, or 8? "))
@@ -528,7 +551,7 @@ def main():
     deck = generate_deck(suits, suit_value, cards, card_value, size)
     initial_size = len(deck)
     run = True
-    '''
+    
     while run:
         game_start(deck)
         cont = input("Would you like to continue? y/n ")
@@ -544,12 +567,9 @@ def main():
             if len(deck) <= initial_size * random.uniform(.45, .55):
                 msg_divider("Reshuffled Deck")
                 deck = generate_deck(suits, suit_value, cards, card_value, size)
-    '''
-    hand = [Card("\u2662", "A", 11), Card("\u2664", "J", 10), Card("\u2661", "9", 9)]
-    hand_two = [Card("\u2664", "J", 10), Card("\u2661", "9", 9)]
-    Hand(hand).print_hand("Player")
-    Hand(hand_two).print_dealer_hand()
     msg_divider("Thanks for playing!")
 
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+#    main()
+
+test()
