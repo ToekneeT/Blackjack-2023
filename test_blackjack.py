@@ -32,7 +32,7 @@ class BlackjackTest(unittest.TestCase):
 		self.assertEqual(312, len(deck))
 		deck = bj.generate_deck(suits, suit_value, cards, card_value, 8)
 		self.assertEqual(416, len(deck))
-
+	'''
 	def test_blackjack(self):
 		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "A", 11)]
 		self.assertEqual(True, bj.is_blackjack(hand))
@@ -40,6 +40,16 @@ class BlackjackTest(unittest.TestCase):
 		self.assertEqual(True, bj.is_blackjack(hand))
 		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "Q", 10)]
 		self.assertEqual(False, bj.is_blackjack(hand))
+	'''
+
+	def test_blackjack(self):
+		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "A", 11)]
+		self.assertEqual(True, bj.Hand(hand).is_blackjack())
+		hand = [bj.Card("u2662", "A", 11), bj.Card("u2664", "Q", 10)]
+		self.assertEqual(True, bj.Hand(hand).is_blackjack())
+		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "Q", 10)]
+		self.assertEqual(False, bj.Hand(hand).is_blackjack())
+
 
 	def test_deal_card(self):
 		deck = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "A", 11), bj.Card("\u2661", "9", 9),

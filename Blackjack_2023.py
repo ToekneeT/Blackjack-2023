@@ -67,6 +67,13 @@ class Hand(object):
                 count += 1
         return self.value
 
+    def is_blackjack(self):
+        if self.cards[0].value == 11 and self.cards[1].value == 10:
+            return True
+        if self.cards[0].value == 10 and self.cards[1].value == 11:
+            return True
+        return False
+
 
 suits = ["Spades", "Hearts", "Clubs", "Diamonds"]
 suit_value = {
@@ -572,4 +579,5 @@ def main():
 #if __name__ == "__main__":
 #    main()
 
-test()
+if __name__ == "__test__":
+    test()
