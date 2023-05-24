@@ -11,11 +11,11 @@ class Hand(object):
     def __init__(self, cards, money):
         self.cards = cards
         self.money = money
-        self.value = cards[0].value + cards[1].value
+        self.value = self.get_hand_value()
 
     def __init__(self, cards):
         self.cards = cards
-        self.value = cards[0].value + cards[1].value
+        self.value = self.get_hand_value()
 
     def print_hand(self, owner):
         print(f"{owner} hand: ")
@@ -53,7 +53,7 @@ class Hand(object):
         print("|" + " " * 5, end="|\n")
         print(" " + "-" * 5)
 
-    def hand_value(self):
+    def get_hand_value(self):
         self.value = 0
         for card in self.cards:
             self.value += card.value
@@ -548,7 +548,8 @@ def test():
     hand_two = [Card("\u2664", "J", 10), Card("\u2661", "9", 9)]
     Hand(hand).print_hand("Player")
     Hand(hand_two).print_dealer_hand()
-    print(Hand(hand).hand_value())
+    print(Hand(hand).value)
+    #print(Hand(hand).get_hand_value())
 
 def main():
     msg_divider("Welcome to Toni's BJ Lounge")

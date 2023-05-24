@@ -61,7 +61,7 @@ class BlackjackTest(unittest.TestCase):
 		self.assertEqual(3, len(deck))
 		self.assertEqual(1, len(hand))
 		self.assertEqual(False, hand[0] in deck)
-
+	'''
 	def test_hand_value(self):
 		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "A", 11)]
 		value = bj.get_hand_value(hand)
@@ -69,7 +69,27 @@ class BlackjackTest(unittest.TestCase):
 		hand = [bj.Card("\u2662", "7", 7), bj.Card("\u2664", "3", 3)]
 		value = bj.get_hand_value(hand)
 		self.assertEqual(10, value)
+	'''
 
+	def test_hand_value(self):
+		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "A", 11)]
+		value = bj.Hand(hand).get_hand_value()
+		self.assertEqual(21, value)
+		hand = [bj.Card("\u2662", "7", 7), bj.Card("\u2664", "3", 3)]
+		value = bj.Hand(hand).get_hand_value()
+		self.assertEqual(10, value)
+		# Testing for aces.
+		hand = [bj.Card("\u2662", "A", 11), bj.Card("\u2664", "A", 11)]
+		value = bj.Hand(hand).get_hand_value()
+		self.assertEqual(12, value)
+		hand = [bj.Card("\u2662", "A", 11), bj.Card("\u2664", "J", 10), bj.Card("\u2661", "9", 9)]
+		value = bj.Hand(hand).get_hand_value()
+		self.assertEqual(20, value)
+		hand = [bj.Card("\u2662", "A", 11), bj.Card("\u2664", "J", 10), bj.Card("\u2661", "9", 9),
+		bj.Card("\u2662", "A", 11)]
+		value = bj.Hand(hand).get_hand_value()
+		self.assertEqual(21, value)
+	'''
 	def test_aces(self):
 		hand = [bj.Card("\u2662", "A", 11), bj.Card("\u2664", "A", 11)]
 		hand_total = bj.get_hand_value(hand)
@@ -84,7 +104,8 @@ class BlackjackTest(unittest.TestCase):
 		hand_total = bj.get_hand_value(hand)
 		value = bj.aces(hand, hand_total)
 		self.assertEqual(21, value)
-
+	'''
+	
 	def test_dd(self):
 		hand = [bj.Card("\u2662", "5", 5), bj.Card("\u2664", "5", 5)]
 		deck = [bj.Card("\u2662", "2", 2)]
