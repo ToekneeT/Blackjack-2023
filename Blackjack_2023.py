@@ -7,6 +7,50 @@ class Card:
         self.name = name  # Name of card, i.e. Ace, King, Queen, etc.
         self.value = value  # Numerical value.
 
+class Hand(object):
+    def __init__(self, cards, money):
+        self.cards = cards
+        self.money = money
+
+    def __init__(self, cards):
+        self.cards = cards
+
+    def print_hand(self, owner):
+        print(f"{owner} hand: ")
+        for card in self.cards:
+            print(" " + "_" * 5)
+            print("|", end="")
+            if card.name == "10":
+                print(card.name, end="")
+                print(" " * 3, end="|\n")
+            else:
+                print(card.name, end="")
+                print(" " * 4, end="|\n")
+            print("|" + card.suit + " " * 4, end="|\n")
+            print("|" + " " * 5, end="|\n")
+            print(" " + "-" * 5)
+
+    def print_dealer_hand(self):
+        print("Dealer hand: ")
+        print(" " + "_" * 5)
+        print("|", end="")
+        if self.cards[0].name == "10":
+            print(self.cards[0].name, end="")
+            print(" " * 3, end="|\n")
+        else:
+            print(self.cards[0].name, end="")
+            print(" " * 4, end="|\n")
+        print("|" + self.cards[0].suit + " " * 4, end="|\n")
+        print("|" + " " * 5, end="|\n")
+        print(" " + "-" * 5, end="\n")
+
+        print(" " + "_" * 5)
+        print("|", end="")
+        print("?" + " " * 4, end="|\n")
+        print("|" + " " * 5, end="|\n")
+        print("|" + " " * 5, end="|\n")
+        print(" " + "-" * 5)
+
 
 suits = ["Spades", "Hearts", "Clubs", "Diamonds"]
 suit_value = {
@@ -484,7 +528,7 @@ def main():
     deck = generate_deck(suits, suit_value, cards, card_value, size)
     initial_size = len(deck)
     run = True
-
+    '''
     while run:
         game_start(deck)
         cont = input("Would you like to continue? y/n ")
@@ -500,36 +544,12 @@ def main():
             if len(deck) <= initial_size * random.uniform(.45, .55):
                 msg_divider("Reshuffled Deck")
                 deck = generate_deck(suits, suit_value, cards, card_value, size)
-
+    '''
+    hand = [Card("\u2662", "A", 11), Card("\u2664", "J", 10), Card("\u2661", "9", 9)]
+    hand_two = [Card("\u2664", "J", 10), Card("\u2661", "9", 9)]
+    Hand(hand).print_hand("Player")
+    Hand(hand_two).print_dealer_hand()
     msg_divider("Thanks for playing!")
-# ''' Swap between rigged and non rigged decks.
 
 if __name__ == "__main__":
     main()
-
-# _____ Rigged Deck ______ Used for testing :>
-'''
-riggedCards = ["A", "10", "J", "K", "Q"]
-#riggedCards = ["A", "A", "A", "A"]
-riggedCardValue = {"A":11, "10":10, "J":10, "K":10, "Q":10}
-
-# _____ Rigged Deck _____
-msg_divider("Rigged Deck Testing")
-size = str(input("How many decks would you like to play? 1, 2, 6, or 8? "))
-while size not in ["1", "2", "6", "8"]:
-    size = str(input("Invalid input, try again: 1, 2, 6, or 8? "))
-rigged_deck = generate_deck(suits, suit_value, riggedCards, riggedCardValue, size) # Used for testing :>
-initial_size = len(rigged_deck)
-run = True
-while run:
-    game_start(rigged_deck)
-    cont = input("Would you like to continue? y/n ")
-    if not yes_no(cont):
-        run = False
-        break
-    if len(rigged_deck) <= initial_size * random.uniform(.1, .25):
-        msg_divider("Reshuffled Deck")
-        rigged_deck = generate_deck(suits, suit_value, riggedCards, riggedCardValue)
-
-msg_divider("Thanks for playing!")
-'''
