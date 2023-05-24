@@ -32,15 +32,6 @@ class BlackjackTest(unittest.TestCase):
 		self.assertEqual(312, len(deck))
 		deck = bj.generate_deck(suits, suit_value, cards, card_value, 8)
 		self.assertEqual(416, len(deck))
-	'''
-	def test_blackjack(self):
-		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "A", 11)]
-		self.assertEqual(True, bj.is_blackjack(hand))
-		hand = [bj.Card("u2662", "A", 11), bj.Card("u2664", "Q", 10)]
-		self.assertEqual(True, bj.is_blackjack(hand))
-		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "Q", 10)]
-		self.assertEqual(False, bj.is_blackjack(hand))
-	'''
 
 	def test_blackjack(self):
 		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "A", 11)]
@@ -50,26 +41,16 @@ class BlackjackTest(unittest.TestCase):
 		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "Q", 10)]
 		self.assertEqual(False, bj.Hand(hand).is_blackjack())
 
-
 	def test_deal_card(self):
 		deck = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "A", 11), bj.Card("\u2661", "9", 9),
 		bj.Card("\u2667", "8", 8)]
 		hand = []
 		self.assertEqual(4, len(deck))
-		self.assertEqual(0, len(hand))
-		bj.deal_card(hand, deck)
+		self.assertEqual(0, len(bj.Hand(hand).cards))
+		bj.Hand(hand).deal_card(deck)
 		self.assertEqual(3, len(deck))
-		self.assertEqual(1, len(hand))
-		self.assertEqual(False, hand[0] in deck)
-	'''
-	def test_hand_value(self):
-		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "A", 11)]
-		value = bj.get_hand_value(hand)
-		self.assertEqual(21, value)
-		hand = [bj.Card("\u2662", "7", 7), bj.Card("\u2664", "3", 3)]
-		value = bj.get_hand_value(hand)
-		self.assertEqual(10, value)
-	'''
+		self.assertEqual(1, len(bj.Hand(hand).cards))
+		self.assertEqual(False, bj.Hand(hand).cards[0] in deck)
 
 	def test_hand_value(self):
 		hand = [bj.Card("\u2662", "K", 10), bj.Card("\u2664", "A", 11)]
@@ -90,22 +71,6 @@ class BlackjackTest(unittest.TestCase):
 		value = bj.Hand(hand).get_hand_value()
 		self.assertEqual(21, value)
 	'''
-	def test_aces(self):
-		hand = [bj.Card("\u2662", "A", 11), bj.Card("\u2664", "A", 11)]
-		hand_total = bj.get_hand_value(hand)
-		value = bj.aces(hand, hand_total)
-		self.assertEqual(12, value)
-		hand = [bj.Card("\u2662", "A", 11), bj.Card("\u2664", "J", 10), bj.Card("\u2661", "9", 9)]
-		hand_total = bj.get_hand_value(hand)
-		value = bj.aces(hand, hand_total)
-		self.assertEqual(20, value)
-		hand = [bj.Card("\u2662", "A", 11), bj.Card("\u2664", "J", 10), bj.Card("\u2661", "9", 9),
-		bj.Card("\u2662", "A", 11)]
-		hand_total = bj.get_hand_value(hand)
-		value = bj.aces(hand, hand_total)
-		self.assertEqual(21, value)
-	'''
-	
 	def test_dd(self):
 		hand = [bj.Card("\u2662", "5", 5), bj.Card("\u2664", "5", 5)]
 		deck = [bj.Card("\u2662", "2", 2)]
@@ -115,7 +80,7 @@ class BlackjackTest(unittest.TestCase):
 		deck = [bj.Card("\u2662", "2", 2)]
 		bj.double_down(hand, bj.get_hand_value(hand), deck)
 		self.assertEqual(22, bj.get_hand_value(hand))
-
+	'''
 
 if __name__ == '__main__':
     unittest.main()

@@ -74,6 +74,12 @@ class Hand(object):
             return True
         return False
 
+    def deal_card(self, deck):
+        dealt_card = random.choice(deck)
+        self.cards.append(dealt_card)
+        deck.remove(dealt_card)
+        return dealt_card.value
+
 
 suits = ["Spades", "Hearts", "Clubs", "Diamonds"]
 suit_value = {
@@ -122,35 +128,6 @@ def generate_deck(suits, suit_value, cards, card_value, size):
     return deck
 
 
-# Prints the cards in a pretty format :>
-def print_cards(hand, hidden):
-    print(" " + "_" * 5)
-    print("|", end="")
-    if not hidden:
-        if hand.name == "10":
-            print(hand.name, end="")
-            print(" " * 3, end="|\n")
-        else:
-            print(hand.name, end="")
-            print(" " * 4, end="|\n")
-        print("|" + hand.suit + " " * 4, end="|\n")
-        print("|" + " " * 5, end="|\n")
-        print(" " + "-" * 5)
-    else:
-        print("?" + " " * 4, end="|\n")
-        print("|" + " " * 5, end="|\n")
-        print("|" + " " * 5, end="|\n")
-        print(" " + "-" * 5)
-
-
-def is_blackjack(hand):
-    if hand[0].value == 11 and hand[1].value == 10:
-        return True
-    if hand[0].value == 10 and hand[1].value == 11:
-        return True
-    return False
-
-
 # Returns a bool based on yes or no user input.
 def yes_no(choice):
     yes_options = ["y", "y.", "yes", "yes.", ""]
@@ -195,27 +172,6 @@ def deal_card(hand, deck):
     hand.append(dealt_card)
     deck.remove(dealt_card)
     return dealt_card.value
-
-
-# Gets the hand value from the list.
-def get_hand_value(hand):
-    hand_total = 0
-    for card in hand:
-        hand_total += card.value
-    return hand_total
-
-
-# Prevents card total greater than 21 due to aces. Returns hand total.
-def aces(hand, hand_total):
-    count = 0
-    while hand_total > 21 and count < len(hand):
-        if hand[count].value == 11:
-            hand[count].value = 1
-            hand_total -= 10
-            count += 1
-        else:
-            count += 1
-    return hand_total
 
 
 # Checks if the player wants to purchase insurance when dealer shows an Ace.
